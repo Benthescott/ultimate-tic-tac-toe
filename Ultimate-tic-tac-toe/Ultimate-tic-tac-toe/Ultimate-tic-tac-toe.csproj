@@ -111,6 +111,8 @@
     <Content Include="Images\blank.png" />
     <Content Include="Images\o.png" />
     <Content Include="Images\x.png" />
+    <Content Include="Images\xWinDiagonal.png" />
+    <Content Include="Images\xWinDiagonal1.png" />
     <Content Include="Images\xWinHorizontal.png" />
     <Content Include="Images\xWinVertical.png" />
     <Content Include="Properties\Default.rd.xml" />
