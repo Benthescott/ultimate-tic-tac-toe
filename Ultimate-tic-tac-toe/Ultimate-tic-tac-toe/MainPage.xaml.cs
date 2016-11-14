@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,6 +29,7 @@ namespace Ultimate_tic_tac_toe
         {
             this.InitializeComponent();
             SetUpBoard();
+            
         }
 
         /// <summary>
@@ -42,6 +44,36 @@ namespace Ultimate_tic_tac_toe
                     ImageBrush brush1 = new ImageBrush();
                     brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
                     btn.Background = brush1;
+                }
+            }
+            
+            foreach (Grid grid in mainGrid.Children)
+            {
+                /*********************************************************************
+                Note: Make this a function of its own. It should receive a grid name 
+                    and 3 button name endings. The function checks every button's name 
+                    for one of the button name endings passed in, by using the 
+                    "contains()" method in button.name property.
+                    FOR MINI GAME TIE: Create 3 images that spell TIE (one letter per
+                    image) and place them in the middle row of mini game. All other
+                    button backgrounds, in mini game, should be changed to blank image.           
+                *********************************************************************/
+                if (grid.Name == "topMiddleMini")
+                {
+                    ImageBrush brush1 = new ImageBrush();
+                    brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png"));
+                    ImageBrush brush2 = new ImageBrush();
+                    brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
+
+                    foreach (Button btn in grid.Children)
+                    {
+                        string test = "top_M_btn";
+                        if (btn.Name.Contains(test))
+                        {
+                            btn.Background = brush1;
+                        } else if (btn.Name == "top_M_mid_M_btn" || btn.Name == "top_M_bot_M_btn")
+                            btn.Background = brush1;        
+                    }
                 }
             }
         }
