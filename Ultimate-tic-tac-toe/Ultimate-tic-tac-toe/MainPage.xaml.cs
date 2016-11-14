@@ -25,15 +25,16 @@ namespace Ultimate_tic_tac_toe
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        enum WinDirection { DiagonalDownUp, DiagonalUpDown, Horizontal, Vertical };
+
         public MainPage()
         {
             this.InitializeComponent();
             SetUpBoard();
-            
         }
 
         /// <summary>
-        /// 
+        /// Initiliazes the GUI game board buttons background to blank image.
         /// </summary>
         private void SetUpBoard()
         {
@@ -49,15 +50,6 @@ namespace Ultimate_tic_tac_toe
             
             foreach (Grid grid in mainGrid.Children)
             {
-                /*********************************************************************
-                Note: Make this a function of its own. It should receive a grid name 
-                    and 3 button name endings. The function checks every button's name 
-                    for one of the button name endings passed in, by using the 
-                    "contains()" method in button.name property.
-                    FOR MINI GAME TIE: Create 3 images that spell TIE (one letter per
-                    image) and place them in the middle row of mini game. All other
-                    button backgrounds, in mini game, should be changed to blank image.           
-                *********************************************************************/
                 if (grid.Name == "topMiddleMini")
                 {
                     ImageBrush brush1 = new ImageBrush();
@@ -83,7 +75,7 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
-        private async void Btn_Click(object sender, RoutedEventArgs e)
+        private void Btn_Click(object sender, RoutedEventArgs e)
         {
             Button clickedBtn = sender as Button;
 
@@ -93,6 +85,62 @@ namespace Ultimate_tic_tac_toe
             ImageBrush brush1 = new ImageBrush();
             brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
             clickedBtn.Background = brush1;
+        }
+
+        private void MiniGameWon(string targetGridName, string targetBtnName1, string targetBtnName2, string targetBtnName3, bool xWon, WinDirection direction)
+        {
+            /*********************************************************************
+            Note: Make this a function of its own. It should receive a grid name 
+                and 3 button name endings. The function checks every button's name 
+                for one of the button name endings passed in, by using the 
+                "contains()" method in button.name property.
+                FOR MINI GAME TIE: Create 3 images that spell TIE (one letter per
+                image) and place them in the middle row of mini game. All other
+                button backgrounds, in mini game, should be changed to blank image.           
+            *********************************************************************/
+            ImageBrush brush1 = new ImageBrush();
+
+            if (xWon)
+            {
+                switch (direction)
+                {
+                    case WinDirection.DiagonalDownUp: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal.png")); break;
+                    case WinDirection.DiagonalUpDown: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal1.png")); break;
+                    case WinDirection.Horizontal: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinHorizontal.png")); break;
+                    case WinDirection.Vertical: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png")); break;
+                }
+            }
+            else
+            {
+                switch (direction)
+                {
+                    case WinDirection.DiagonalDownUp: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinDiagonal.png")); break;
+                    case WinDirection.DiagonalUpDown: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinDiagonal1.png")); break;
+                    case WinDirection.Horizontal: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinHorizontal.png")); break;
+                    case WinDirection.Vertical: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinVertical.png")); break;
+                }
+            }
+
+            foreach (Grid grid in mainGrid.Children)
+            {
+                if (grid.Name == targetGridName)
+                {
+                    foreach (Button btn in grid.Children)
+                    {
+
+                        /*
+                         * Last to do in this function. Setup this code to compare against the 3 passed button names
+                        */
+                        string test = "top_L_btn";
+                        if (btn.Name.Contains(test))
+                        {
+                            btn.Background = brush1;
+                        }
+                        else if (btn.Name == "top_M_mid_M_btn" || btn.Name == "top_M_bot_R_btn")
+                            btn.Background = brush1;
+                    }
+                }
+            }
         }
     }
 }

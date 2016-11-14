@@ -110,6 +110,10 @@
   <ItemGroup>
     <Content Include="Images\blank.png" />
     <Content Include="Images\o.png" />
+    <Content Include="Images\oWinDiagonal.png" />
+    <Content Include="Images\oWinDiagonal1.png" />
+    <Content Include="Images\oWinHorizontal.png" />
+    <Content Include="Images\oWinVertical.png" />
     <Content Include="Images\x.png" />
     <Content Include="Images\xWinDiagonal.png" />
     <Content Include="Images\xWinDiagonal1.png" />
