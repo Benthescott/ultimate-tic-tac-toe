@@ -31,6 +31,7 @@ namespace Ultimate_tic_tac_toe
         {
             this.InitializeComponent();
             SetUpBoard();
+            
         }
 
         /// <summary>
@@ -86,18 +87,18 @@ namespace Ultimate_tic_tac_toe
             brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
             clickedBtn.Background = brush1;
         }
-
+        
+        /// <summary>
+        /// Adds a line through the 3 winning moves to a mini game.
+        /// </summary>
+        /// <param name="targetGridName"></param>
+        /// <param name="targetBtnName1"></param>
+        /// <param name="targetBtnName2"></param>
+        /// <param name="targetBtnName3"></param>
+        /// <param name="xWon">X won = true, O won = false</param>
+        /// <param name="direction"></param>
         private void MiniGameWon(string targetGridName, string targetBtnName1, string targetBtnName2, string targetBtnName3, bool xWon, WinDirection direction)
         {
-            /*********************************************************************
-            Note: Make this a function of its own. It should receive a grid name 
-                and 3 button name endings. The function checks every button's name 
-                for one of the button name endings passed in, by using the 
-                "contains()" method in button.name property.
-                FOR MINI GAME TIE: Create 3 images that spell TIE (one letter per
-                image) and place them in the middle row of mini game. All other
-                button backgrounds, in mini game, should be changed to blank image.           
-            *********************************************************************/
             ImageBrush brush1 = new ImageBrush();
 
             if (xWon)
@@ -127,17 +128,46 @@ namespace Ultimate_tic_tac_toe
                 {
                     foreach (Button btn in grid.Children)
                     {
+                        if (btn.Name.Contains(targetBtnName1) || btn.Name == targetBtnName2 || btn.Name == targetBtnName3)
+                            btn.Background = brush1;
+                    }
+                }
+            }
+        }
 
-                        /*
-                         * Last to do in this function. Setup this code to compare against the 3 passed button names
-                        */
-                        string test = "top_L_btn";
-                        if (btn.Name.Contains(test))
-                        {
+        /// <summary>
+        /// Displays "TIE" for a mini game.
+        /// </summary>
+        /// <param name="targetGridName"></param>
+        /// <param name="targetBtnName1">Middle Left Button Name</param>
+        /// <param name="targetBtnName2">Middle Middle Button Name</param>
+        /// <param name="targetBtnName3">Middle Right Button Name</param>
+        private void MiniGameTied(string targetGridName, string targetBtnName1, string targetBtnName2, string targetBtnName3)
+        {
+            //Brushes 1-3 are for the images that spell 1 letter of the word "TIE"
+            ImageBrush brush1 = new ImageBrush();
+            brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png"));
+            ImageBrush brush2 = new ImageBrush();
+            brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png"));
+            ImageBrush brush3 = new ImageBrush();
+            brush3.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png"));
+            ImageBrush brush4 = new ImageBrush();
+            brush4.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+
+            foreach (Grid grid in mainGrid.Children)
+            {
+                if (grid.Name == targetGridName)
+                {
+                    foreach (Button btn in grid.Children)
+                    {
+                        if (btn.Name.Contains(targetBtnName1))
                             btn.Background = brush1;
-                        }
-                        else if (btn.Name == "top_M_mid_M_btn" || btn.Name == "top_M_bot_R_btn")
-                            btn.Background = brush1;
+                        else if (btn.Name.Contains(targetBtnName2))
+                            btn.Background = brush2;
+                        else if (btn.Name.Contains(targetBtnName3))
+                            btn.Background = brush3;
+                        else
+                            btn.Background = brush4;
                     }
                 }
             }
