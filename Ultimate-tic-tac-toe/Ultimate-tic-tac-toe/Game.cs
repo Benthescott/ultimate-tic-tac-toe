@@ -8,5 +8,11 @@ namespace Ultimate_tic_tac_toe
 {
     class Game
     {
+        private Board currentBoard;
+
+        public Game()
+        {
+
+        }
     }
 }
