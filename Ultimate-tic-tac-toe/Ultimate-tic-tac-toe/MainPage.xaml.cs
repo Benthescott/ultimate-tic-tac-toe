@@ -49,31 +49,31 @@ namespace Ultimate_tic_tac_toe
                 }
             }
             
-            foreach (Grid grid in mainGrid.Children)
-            {
-                if (grid.Name == "topMiddleMini")
-                {
-                    ImageBrush brush1 = new ImageBrush();
-                    ImageBrush brush2 = new ImageBrush();
-                    ImageBrush brush3 = new ImageBrush();
-                    brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal.png"));
-                    brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
-                    brush3.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal1.png"));                
+            //foreach (Grid grid in mainGrid.Children)
+            //{
+            //    if (grid.Name == "topMiddleMini")
+            //    {
+            //        ImageBrush brush1 = new ImageBrush();
+            //        ImageBrush brush2 = new ImageBrush();
+            //        ImageBrush brush3 = new ImageBrush();
+            //        brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal.png"));
+            //        brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
+            //        brush3.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal1.png"));                
 
-                    foreach (Button btn in grid.Children)
-                    {
-                        string test = "top_L_btn";
-                        if (btn.Name.Contains(test))
-                        {
-                            btn.Background = brush3;
-                        }
-                        else if (btn.Name == "top_M_mid_M_btn" || btn.Name == "top_M_bot_R_btn")
-                            btn.Background = brush3;
-                        else
-                            btn.Background = brush2;   
-                    }
-                }
-            }
+            //        foreach (Button btn in grid.Children)
+            //        {
+            //            string test = "top_L_btn";
+            //            if (btn.Name.Contains(test))
+            //            {
+            //                btn.Background = brush3;
+            //            }
+            //            else if (btn.Name == "top_M_mid_M_btn" || btn.Name == "top_M_bot_R_btn")
+            //                btn.Background = brush3;
+            //            else
+            //                btn.Background = brush2;   
+            //        }
+            //    }
+            //}
         }
 
         private void Btn_Click(object sender, RoutedEventArgs e)
