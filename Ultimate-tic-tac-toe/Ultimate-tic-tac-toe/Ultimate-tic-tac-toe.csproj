@@ -94,12 +94,15 @@
     <None Include="Ultimate-tic-tac-toe_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlphaBeta.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Game.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -109,14 +112,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\blank.png" />
-    <Content Include="Images\e.png" />
-    <Content Include="Images\i.png" />
     <Content Include="Images\o.png" />
     <Content Include="Images\oWinDiagonal.png" />
     <Content Include="Images\oWinDiagonal1.png" />
     <Content Include="Images\oWinHorizontal.png" />
     <Content Include="Images\oWinVertical.png" />
-    <Content Include="Images\t.png" />
     <Content Include="Images\x.png" />
     <Content Include="Images\xWinDiagonal.png" />
     <Content Include="Images\xWinDiagonal1.png" />
