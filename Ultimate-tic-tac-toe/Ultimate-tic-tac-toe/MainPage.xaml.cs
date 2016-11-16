@@ -31,7 +31,10 @@ namespace Ultimate_tic_tac_toe
         {
             this.InitializeComponent();
             SetUpBoard();
-            
+            MiniGameWon("middleLeftMini", "top_R_btn", "mid_M_btn", "bot_L_btn", false, WinDirection.DiagonalDownUp);
+            MiniGameWon("topLeftMini", "top_M_btn", "mid_M_btn", "bot_M_btn", true, WinDirection.Vertical);
+            MiniGameWon("bottomRightMini", "mid_L_btn", "mid_M_btn", "mid_R_btn", false, WinDirection.Horizontal);
+            MiniGameTied("topRightMini");
         }
 
         /// <summary>
@@ -128,7 +131,7 @@ namespace Ultimate_tic_tac_toe
                 {
                     foreach (Button btn in grid.Children)
                     {
-                        if (btn.Name.Contains(targetBtnName1) || btn.Name == targetBtnName2 || btn.Name == targetBtnName3)
+                        if (btn.Name.Contains(targetBtnName1) || btn.Name.Contains(targetBtnName2) || btn.Name.Contains(targetBtnName3))
                             btn.Background = brush1;
                     }
                 }
@@ -139,18 +142,15 @@ namespace Ultimate_tic_tac_toe
         /// Displays "TIE" for a mini game.
         /// </summary>
         /// <param name="targetGridName"></param>
-        /// <param name="targetBtnName1">Middle Left Button Name</param>
-        /// <param name="targetBtnName2">Middle Middle Button Name</param>
-        /// <param name="targetBtnName3">Middle Right Button Name</param>
-        private void MiniGameTied(string targetGridName, string targetBtnName1, string targetBtnName2, string targetBtnName3)
+        private void MiniGameTied(string targetGridName)
         {
             //Brushes 1-3 are for the images that spell 1 letter of the word "TIE"
             ImageBrush brush1 = new ImageBrush();
-            brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png"));
+            brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/t.png"));
             ImageBrush brush2 = new ImageBrush();
-            brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png"));
+            brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/i.png"));
             ImageBrush brush3 = new ImageBrush();
-            brush3.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png"));
+            brush3.ImageSource = new BitmapImage(new Uri("ms-appx:///images/e.png"));
             ImageBrush brush4 = new ImageBrush();
             brush4.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
 
@@ -160,11 +160,11 @@ namespace Ultimate_tic_tac_toe
                 {
                     foreach (Button btn in grid.Children)
                     {
-                        if (btn.Name.Contains(targetBtnName1))
+                        if (btn.Name.Contains("mid_L_btn"))
                             btn.Background = brush1;
-                        else if (btn.Name.Contains(targetBtnName2))
+                        else if (btn.Name.Contains("mid_M_btn"))
                             btn.Background = brush2;
-                        else if (btn.Name.Contains(targetBtnName3))
+                        else if (btn.Name.Contains("mid_R_btn"))
                             btn.Background = brush3;
                         else
                             btn.Background = brush4;
