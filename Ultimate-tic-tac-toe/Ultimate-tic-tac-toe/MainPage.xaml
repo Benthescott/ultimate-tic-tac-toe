@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Width="750" Height="800">
-
+    
     <Grid Name="mainGrid" Background="Black" Width="700" Height="700">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -257,4 +257,12 @@
             <Button x:Name="bot_R_bot_R_btn" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="Btn_Click" Width="70" Height="70" Margin="2,2,0,0" />
         </Grid>
     </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Icon="Play" Label="New Game" />
+            <AppBarButton Icon="Setting" Label="About" />
+            <AppBarButton Icon="Cancel" Label="Exit" />            
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>
