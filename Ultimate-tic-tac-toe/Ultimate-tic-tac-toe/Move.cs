@@ -8,7 +8,7 @@ namespace Ultimate_tic_tac_toe
 {
     class Move
     {
-        public GridLocation.MiniGamePos miniGameMove;
-        public GridLocation.GridPos gridMove;
+        public int gameNum;
+        public int pos;
     }
 }

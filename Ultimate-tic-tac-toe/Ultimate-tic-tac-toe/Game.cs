@@ -12,7 +12,7 @@ namespace Ultimate_tic_tac_toe
         private Board currentBoard;
         private bool isPlayerX;
         private bool xTurn;
-        private Move playerMove;
+        private Move aMove;
 
         public Game()
         {
@@ -43,15 +43,7 @@ namespace Ultimate_tic_tac_toe
 
         private bool IsValidMove()
         {
-            char status;
-            int boardNum;
-
-            switch(playerMove.gridMove)
-            {
-
-            }
-
-            if (currentBoard.BoardStatus.)
+            if (currentBoard.BoardStatus)
         }
 
         private void TranslateBtnName(string location)
@@ -66,9 +58,9 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": playerMove.gridMove = GridLocation.GridPos.TopLeft; break;
-                            case "M": playerMove.gridMove = GridLocation.GridPos.TopMiddle; break;
-                            case "R": playerMove.gridMove = GridLocation.GridPos.TopRight; break;
+                            case "L": aMove.gameNum = 0; break;
+                            case "M": aMove.gameNum = 1; break;
+                            case "R": aMove.gameNum = 2; break;
                         }
                         break;
                     }
@@ -76,9 +68,9 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": playerMove.gridMove = GridLocation.GridPos.MiddleLeft; break;
-                            case "M": playerMove.gridMove = GridLocation.GridPos.MiddleMiddle; break;
-                            case "R": playerMove.gridMove = GridLocation.GridPos.MiddleRight; break;
+                            case "L": aMove.gameNum = 3; break;
+                            case "M": aMove.gameNum = 4; break;
+                            case "R": aMove.gameNum = 5; break;
                         }
                         break;
                     }
@@ -86,9 +78,9 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": playerMove.gridMove = GridLocation.GridPos.BottomLeft; break;
-                            case "M": playerMove.gridMove = GridLocation.GridPos.BottomMiddle; break;
-                            case "R": playerMove.gridMove = GridLocation.GridPos.BottomRight; break;
+                            case "L": aMove.gameNum = 6; break;
+                            case "M": aMove.gameNum = 7; break;
+                            case "R": aMove.gameNum = 8; break;
                         }
                         break;
                     }
@@ -101,9 +93,9 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[3])
                         {
-                            case "L": playerMove.miniGameMove = GridLocation.MiniGamePos.TopLeft; break;
-                            case "M": playerMove.miniGameMove = GridLocation.MiniGamePos.TopMiddle; break;
-                            case "R": playerMove.miniGameMove = GridLocation.MiniGamePos.TopRight; break;
+                            case "L": aMove.pos = 0; break;
+                            case "M": aMove.pos = 1; break;
+                            case "R": aMove.pos = 2; break;
                         }
                         break;
                     }
@@ -111,9 +103,9 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": playerMove.miniGameMove = GridLocation.MiniGamePos.MiddleLeft; break;
-                            case "M": playerMove.miniGameMove = GridLocation.MiniGamePos.MiddleMiddle; break;
-                            case "R": playerMove.miniGameMove = GridLocation.MiniGamePos.MiddleRight; break;
+                            case "L": aMove.pos = 3; break;
+                            case "M": aMove.pos = 4; break;
+                            case "R": aMove.pos = 5; break;
                         }
                         break;
                     }
@@ -121,9 +113,9 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": playerMove.miniGameMove = GridLocation.MiniGamePos.BottomLeft; break;
-                            case "M": playerMove.miniGameMove = GridLocation.MiniGamePos.BottomMiddle; break;
-                            case "R": playerMove.miniGameMove = GridLocation.MiniGamePos.BottomRight; break;
+                            case "L": aMove.pos = 6; break;
+                            case "M": aMove.pos = 7; break;
+                            case "R": aMove.pos = 8; break;
                         }
                         break;
                     }
