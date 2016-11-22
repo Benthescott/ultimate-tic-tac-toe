@@ -27,6 +27,8 @@ namespace Ultimate_tic_tac_toe
     {
         enum WinDirection { DiagonalDownUp, DiagonalUpDown, Horizontal, Vertical };
 
+        private Game game;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -60,9 +62,33 @@ namespace Ultimate_tic_tac_toe
             //var dialog = new MessageDialog("You clicked " + clickedBtn.Name);
             //await dialog.ShowAsync();
 
-            ImageBrush brush1 = new ImageBrush();
-            brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
-            clickedBtn.Background = brush1;
+            char imgVar = game.PlayerMadeMove(clickedBtn.Name);
+            bool uiHasChanged = false;
+
+            if (imgVar == 'X')
+            {
+                ImageBrush brush1 = new ImageBrush();
+                brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
+                clickedBtn.Background = brush1;
+                uiHasChanged = true;                
+            }
+            else if (imgVar == 'O')
+            {
+                ImageBrush brush1 = new ImageBrush();
+                brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
+                clickedBtn.Background = brush1;
+                uiHasChanged = true;
+            }
+
+            if (uiHasChanged)
+            {
+                if (game.isMiniGameWon())
+                {
+                    // Detect which player won and update board UI and game
+
+                    // Next, check for big game win and act accordingly
+                }
+            }
         }
         
         /// <summary>

@@ -13,18 +13,71 @@ namespace Ultimate_tic_tac_toe
         private bool isPlayerX;
         private bool xTurn;
         private Move aMove;
+        private int miniGameRowNum;
+        private int miniGameColNum;
 
         public Game()
         {
             
         }
 
+        public bool isMiniGameWon()
+        {
+            int gameRow = miniGameRowNum;
+            int gameCol = miniGameColNum;
+
+            // Check for a horizontal win
+            for (int i = 0; i < 3; i++)
+            {
+                if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'X' && currentBoard.BoardStatus[gameRow, gameCol] == 'X'
+                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'X')
+                    return true;                                            // X won horizontally
+                else if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'O' && currentBoard.BoardStatus[gameRow, gameCol] == 'O'
+                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'O')
+                        return true;                                            // O won horizontally
+
+                gameRow++;
+            }
+
+            // Reset number
+            gameRow = miniGameRowNum;
+
+            // Check for a vertical win
+            for (int i = 0; i < 3; i++)
+            {
+                if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'X' && currentBoard.BoardStatus[gameRow, gameCol] == 'X'
+                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'X')
+                    return true;                                            // X won vertically
+                else if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'O' && currentBoard.BoardStatus[gameRow, gameCol] == 'O'
+                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'O')
+                    return true;                                            // O won vertically
+
+                gameCol++;
+            }
+
+            // Reset number
+            gameCol = miniGameColNum;
+
+            // Check for a diagonal win
+            if (currentBoard.BoardStatus[gameRow, gameCol] == 'X' && ((currentBoard.BoardStatus[gameRow + 1, gameCol - 1] == 'X' 
+                && currentBoard.BoardStatus[gameRow - 1, gameCol + 1] == 'X') || (currentBoard.BoardStatus[gameRow - 1, gameCol - 1] == 'X'  
+                    && currentBoard.BoardStatus[gameRow + 1, gameCol + 1] == 'X')))
+                return true;                                                // X won diagonally
+            else if (currentBoard.BoardStatus[gameRow, gameCol] == 'O' && ((currentBoard.BoardStatus[gameRow + 1, gameCol - 1] == 'O'
+                && currentBoard.BoardStatus[gameRow - 1, gameCol + 1] == 'O') || (currentBoard.BoardStatus[gameRow - 1, gameCol - 1] == 'O'
+                    && currentBoard.BoardStatus[gameRow + 1, gameCol + 1] == 'O')))
+                return true;                                                // O won diagonally
+
+            // If reached, no win condition was detected
+            return false;
+        }
+
         /// <summary>
-        /// Returns a string for the controller to know if X or O image should be placed
+        /// A capitalized X/O/B is returned for the controller to know if the board needs to be updated.
         /// on the button clicked on by the user.
         /// </summary>
         /// <param name="location">Entire button name</param>
-        /// <returns>A capitalized X/O/B is returned for the controller to know how to respond to user click.</returns>
+        /// <returns>Char</returns>
         public char PlayerMadeMove(string location)
         {
             TranslateBtnName(location);
@@ -33,21 +86,19 @@ namespace Ultimate_tic_tac_toe
             {
                 if (xTurn)
                 {
-                    // Do stuff with model (update game board) and anything else necessary
+                    // Do stuff with model (update game board) and anything else necessary to
                     //   process the turn before returning to controller.
                     return 'X';
                 }
                 else
                 {
-                    // Do stuff with model (update game board) and anything else necessary
+                    // Do stuff with model (update game board) and anything else necessary to
                     //   process the turn before returning to controller.
                     return 'O';
                 }
             }
             else
-            {
-                return 'B';
-            }
+                return 'B';     //Not a valid move
         }
 
         private bool IsValidMove()
@@ -115,6 +166,10 @@ namespace Ultimate_tic_tac_toe
                         break;
                     }
             }
+
+            //Capture current minigame location
+            miniGameRowNum = aMove.row;
+            miniGameColNum = aMove.col;
 
             //Parse out which location in mini game was played
             switch (locationArray[2])
