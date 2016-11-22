@@ -10,7 +10,6 @@ namespace Ultimate_tic_tac_toe
     class Game
     {
         private Board board;
-        private bool isPlayerX;
         private bool xTurn;
         private Move aMove;
         private int miniGameRowNum;
@@ -18,7 +17,21 @@ namespace Ultimate_tic_tac_toe
 
         public Game()
         {
-            
+            xTurn = true;       // Player will always be X and go first
+        }
+
+        private void updateBoard()
+        {
+            if (xTurn)
+                board.gameBoard[aMove.row, aMove.col] = 'X';
+            else
+                board.gameBoard[aMove.row, aMove.col] = 'O';
+
+            if (isMiniGameWon())
+                if (xWon())
+                    board.boardStatus[miniGameRowNum, miniGameColNum] = 'X';
+                else
+                    board.boardStatus[miniGameRowNum, miniGameColNum] = 'O';
         }
 
         /// <summary>
@@ -27,93 +40,66 @@ namespace Ultimate_tic_tac_toe
         /// <returns></returns>
         public bool xWon()
         {
-            int gameRow = miniGameRowNum;
-            int gameCol = miniGameColNum;
-
-            // Check for a horizontal win
-            for (int i = 0; i < 3; i++)
-            {
-                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
-                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
-                    return true;                                            // X won horizontally
-
-                gameRow++;
-            }
-
-            // Reset number
-            gameRow = miniGameRowNum;
-
-            // Check for a vertical win
-            for (int i = 0; i < 3; i++)
-            {
-                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
-                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
-                    return true;                                            // X won vertically
-
-                gameCol++;
-            }
-
-            // Reset number
-            gameCol = miniGameColNum;
-
-            // Check for a diagonal win
-            if (board.gameBoard[gameRow, gameCol] == 'X' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'X'
-                && board.gameBoard[gameRow - 1, gameCol + 1] == 'X') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'X'
-                    && board.gameBoard[gameRow + 1, gameCol + 1] == 'X')))
-                return true;                                                // X won diagonally
-
-            return false;
+            if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'X')
+                return true;
+            else
+                return false;
         }
 
         public bool isMiniGameWon()
         {
-            int gameRow = miniGameRowNum;
-            int gameCol = miniGameColNum;
-
-            // Check for a horizontal win
-            for (int i = 0; i < 3; i++)
+            if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'B')
             {
-                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
-                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
-                    return true;                                            // X won horizontally
-                else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
-                    && board.gameBoard[gameRow, gameCol + 1] == 'O')
+                int gameRow = miniGameRowNum;
+                int gameCol = miniGameColNum;
+
+                // Check for a horizontal win
+                for (int i = 0; i < 3; i++)
+                {
+                    if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
+                        && board.gameBoard[gameRow, gameCol + 1] == 'X')
+                        return true;                                            // X won horizontally
+                    else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
+                        && board.gameBoard[gameRow, gameCol + 1] == 'O')
                         return true;                                            // O won horizontally
 
-                gameRow++;
+                    gameRow++;
+                }
+
+                // Reset number
+                gameRow = miniGameRowNum;
+
+                // Check for a vertical win
+                for (int i = 0; i < 3; i++)
+                {
+                    if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
+                        && board.gameBoard[gameRow, gameCol + 1] == 'X')
+                        return true;                                            // X won vertically
+                    else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
+                        && board.gameBoard[gameRow, gameCol + 1] == 'O')
+                        return true;                                            // O won vertically
+
+                    gameCol++;
+                }
+
+                // Reset number
+                gameCol = miniGameColNum;
+
+                // Check for a diagonal win
+                if (board.gameBoard[gameRow, gameCol] == 'X' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'X'
+                    && board.gameBoard[gameRow - 1, gameCol + 1] == 'X') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'X'
+                        && board.gameBoard[gameRow + 1, gameCol + 1] == 'X')))
+                    return true;                                                // X won diagonally
+                else if (board.gameBoard[gameRow, gameCol] == 'O' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'O'
+                    && board.gameBoard[gameRow - 1, gameCol + 1] == 'O') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'O'
+                        && board.gameBoard[gameRow + 1, gameCol + 1] == 'O')))
+                    return true;                                                // O won diagonally
+
+                // If reached, no win condition was detected
+                return false;
             }
-
-            // Reset number
-            gameRow = miniGameRowNum;
-
-            // Check for a vertical win
-            for (int i = 0; i < 3; i++)
-            {
-                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
-                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
-                    return true;                                            // X won vertically
-                else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
-                    && board.gameBoard[gameRow, gameCol + 1] == 'O')
-                    return true;                                            // O won vertically
-
-                gameCol++;
-            }
-
-            // Reset number
-            gameCol = miniGameColNum;
-
-            // Check for a diagonal win
-            if (board.gameBoard[gameRow, gameCol] == 'X' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'X' 
-                && board.gameBoard[gameRow - 1, gameCol + 1] == 'X') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'X'  
-                    && board.gameBoard[gameRow + 1, gameCol + 1] == 'X')))
-                return true;                                                // X won diagonally
-            else if (board.gameBoard[gameRow, gameCol] == 'O' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'O'
-                && board.gameBoard[gameRow - 1, gameCol + 1] == 'O') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'O'
-                    && board.gameBoard[gameRow + 1, gameCol + 1] == 'O')))
-                return true;                                                // O won diagonally
-
-            // If reached, no win condition was detected
-            return false;
+            else
+                return true;
         }
 
         /// <summary>
@@ -130,19 +116,23 @@ namespace Ultimate_tic_tac_toe
             {
                 if (xTurn)
                 {
+                    xTurn = false;
+                    updateBoard();
                     // Do stuff with model (update game board) and anything else necessary to
                     //   process the turn before returning to controller.
                     return 'X';
                 }
                 else
                 {
+                    xTurn = true;
+                    updateBoard();
                     // Do stuff with model (update game board) and anything else necessary to
                     //   process the turn before returning to controller.
                     return 'O';
                 }
             }
             else
-                return 'B';     //Not a valid move
+                return 'B';     // Not a valid move
         }
 
         private bool IsValidMove()

@@ -86,7 +86,7 @@ namespace Ultimate_tic_tac_toe
                 {
                     if (game.xWon())
                     {
-                        // Update board UI and game
+                        // Update UI
 
                     }
                     // Next, check for big game win and act accordingly
