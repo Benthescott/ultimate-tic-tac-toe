@@ -9,7 +9,7 @@ namespace Ultimate_tic_tac_toe
 {
     class Game
     {
-        private Board currentBoard;
+        private Board board;
         private bool isPlayerX;
         private bool xTurn;
         private Move aMove;
@@ -21,6 +21,50 @@ namespace Ultimate_tic_tac_toe
             
         }
 
+        /// <summary>
+        /// If a win was detected, this function determines if X was the winner
+        /// </summary>
+        /// <returns></returns>
+        public bool xWon()
+        {
+            int gameRow = miniGameRowNum;
+            int gameCol = miniGameColNum;
+
+            // Check for a horizontal win
+            for (int i = 0; i < 3; i++)
+            {
+                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
+                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
+                    return true;                                            // X won horizontally
+
+                gameRow++;
+            }
+
+            // Reset number
+            gameRow = miniGameRowNum;
+
+            // Check for a vertical win
+            for (int i = 0; i < 3; i++)
+            {
+                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
+                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
+                    return true;                                            // X won vertically
+
+                gameCol++;
+            }
+
+            // Reset number
+            gameCol = miniGameColNum;
+
+            // Check for a diagonal win
+            if (board.gameBoard[gameRow, gameCol] == 'X' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'X'
+                && board.gameBoard[gameRow - 1, gameCol + 1] == 'X') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'X'
+                    && board.gameBoard[gameRow + 1, gameCol + 1] == 'X')))
+                return true;                                                // X won diagonally
+
+            return false;
+        }
+
         public bool isMiniGameWon()
         {
             int gameRow = miniGameRowNum;
@@ -29,11 +73,11 @@ namespace Ultimate_tic_tac_toe
             // Check for a horizontal win
             for (int i = 0; i < 3; i++)
             {
-                if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'X' && currentBoard.BoardStatus[gameRow, gameCol] == 'X'
-                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'X')
+                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
+                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
                     return true;                                            // X won horizontally
-                else if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'O' && currentBoard.BoardStatus[gameRow, gameCol] == 'O'
-                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'O')
+                else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
+                    && board.gameBoard[gameRow, gameCol + 1] == 'O')
                         return true;                                            // O won horizontally
 
                 gameRow++;
@@ -45,11 +89,11 @@ namespace Ultimate_tic_tac_toe
             // Check for a vertical win
             for (int i = 0; i < 3; i++)
             {
-                if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'X' && currentBoard.BoardStatus[gameRow, gameCol] == 'X'
-                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'X')
+                if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
+                    && board.gameBoard[gameRow, gameCol + 1] == 'X')
                     return true;                                            // X won vertically
-                else if (currentBoard.BoardStatus[gameRow, gameCol - 1] == 'O' && currentBoard.BoardStatus[gameRow, gameCol] == 'O'
-                    && currentBoard.BoardStatus[gameRow, gameCol + 1] == 'O')
+                else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
+                    && board.gameBoard[gameRow, gameCol + 1] == 'O')
                     return true;                                            // O won vertically
 
                 gameCol++;
@@ -59,13 +103,13 @@ namespace Ultimate_tic_tac_toe
             gameCol = miniGameColNum;
 
             // Check for a diagonal win
-            if (currentBoard.BoardStatus[gameRow, gameCol] == 'X' && ((currentBoard.BoardStatus[gameRow + 1, gameCol - 1] == 'X' 
-                && currentBoard.BoardStatus[gameRow - 1, gameCol + 1] == 'X') || (currentBoard.BoardStatus[gameRow - 1, gameCol - 1] == 'X'  
-                    && currentBoard.BoardStatus[gameRow + 1, gameCol + 1] == 'X')))
+            if (board.gameBoard[gameRow, gameCol] == 'X' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'X' 
+                && board.gameBoard[gameRow - 1, gameCol + 1] == 'X') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'X'  
+                    && board.gameBoard[gameRow + 1, gameCol + 1] == 'X')))
                 return true;                                                // X won diagonally
-            else if (currentBoard.BoardStatus[gameRow, gameCol] == 'O' && ((currentBoard.BoardStatus[gameRow + 1, gameCol - 1] == 'O'
-                && currentBoard.BoardStatus[gameRow - 1, gameCol + 1] == 'O') || (currentBoard.BoardStatus[gameRow - 1, gameCol - 1] == 'O'
-                    && currentBoard.BoardStatus[gameRow + 1, gameCol + 1] == 'O')))
+            else if (board.gameBoard[gameRow, gameCol] == 'O' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'O'
+                && board.gameBoard[gameRow - 1, gameCol + 1] == 'O') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'O'
+                    && board.gameBoard[gameRow + 1, gameCol + 1] == 'O')))
                 return true;                                                // O won diagonally
 
             // If reached, no win condition was detected
@@ -103,7 +147,7 @@ namespace Ultimate_tic_tac_toe
 
         private bool IsValidMove()
         {
-            if (currentBoard.BoardStatus[aMove.row, aMove.col] != 'B')
+            if (board.gameBoard[aMove.row, aMove.col] != 'B')
                 return false;   //Not a valid move
             else
                 return true;

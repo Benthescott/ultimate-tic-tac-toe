@@ -84,8 +84,11 @@ namespace Ultimate_tic_tac_toe
             {
                 if (game.isMiniGameWon())
                 {
-                    // Detect which player won and update board UI and game
+                    if (game.xWon())
+                    {
+                        // Update board UI and game
 
+                    }
                     // Next, check for big game win and act accordingly
                 }
             }
