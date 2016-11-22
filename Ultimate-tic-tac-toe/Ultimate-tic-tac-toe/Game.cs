@@ -24,26 +24,38 @@ namespace Ultimate_tic_tac_toe
         /// on the button clicked on by the user.
         /// </summary>
         /// <param name="location">Entire button name</param>
-        /// <returns></returns>
-        public string PlayerMadeMove(string location)
+        /// <returns>A capitalized X/O/B is returned for the controller to know how to respond to user click.</returns>
+        public char PlayerMadeMove(string location)
         {
             TranslateBtnName(location);
 
             if (IsValidMove())
             {
-
+                if (xTurn)
+                {
+                    // Do stuff with model (update game board) and anything else necessary
+                    //   process the turn before returning to controller.
+                    return 'X';
+                }
+                else
+                {
+                    // Do stuff with model (update game board) and anything else necessary
+                    //   process the turn before returning to controller.
+                    return 'O';
+                }
             }
             else
             {
-
+                return 'B';
             }
-
-            return "";
         }
 
         private bool IsValidMove()
         {
-            if (currentBoard.BoardStatus)
+            if (currentBoard.BoardStatus[aMove.row, aMove.col] != 'B')
+                return false;   //Not a valid move
+            else
+                return true;
         }
 
         private void TranslateBtnName(string location)
@@ -58,9 +70,15 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": aMove.gameNum = 0; break;
-                            case "M": aMove.gameNum = 1; break;
-                            case "R": aMove.gameNum = 2; break;
+                            case "L":
+                                aMove.row = 1;
+                                aMove.col = 1; break;
+                            case "M":
+                                aMove.row = 1;
+                                aMove.col = 4; break;
+                            case "R":
+                                aMove.row = 1;
+                                aMove.col = 7; break;
                         }
                         break;
                     }
@@ -68,9 +86,15 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": aMove.gameNum = 3; break;
-                            case "M": aMove.gameNum = 4; break;
-                            case "R": aMove.gameNum = 5; break;
+                            case "L":
+                                aMove.row = 4;
+                                aMove.col = 1; break;
+                            case "M":
+                                aMove.row = 4;
+                                aMove.col = 4; break;
+                            case "R":
+                                aMove.row = 4;
+                                aMove.col = 7; break;
                         }
                         break;
                     }
@@ -78,9 +102,15 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": aMove.gameNum = 6; break;
-                            case "M": aMove.gameNum = 7; break;
-                            case "R": aMove.gameNum = 8; break;
+                            case "L":
+                                aMove.row = 7;
+                                aMove.col = 1; break;
+                            case "M":
+                                aMove.row = 7;
+                                aMove.col = 4; break;
+                            case "R":
+                                aMove.row = 7;
+                                aMove.col = 7; break;
                         }
                         break;
                     }
@@ -93,9 +123,14 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[3])
                         {
-                            case "L": aMove.pos = 0; break;
-                            case "M": aMove.pos = 1; break;
-                            case "R": aMove.pos = 2; break;
+                            case "L":
+                                aMove.row -= 1;
+                                aMove.col -= 1; break;
+                            case "M":
+                                aMove.row -= 1; break;
+                            case "R":
+                                aMove.row -= 1;
+                                aMove.col += 1; break;
                         }
                         break;
                     }
@@ -103,9 +138,10 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": aMove.pos = 3; break;
-                            case "M": aMove.pos = 4; break;
-                            case "R": aMove.pos = 5; break;
+                            case "L":
+                                aMove.col -= 1; break;
+                            case "R":
+                                aMove.col += 1; break;
                         }
                         break;
                     }
@@ -113,9 +149,14 @@ namespace Ultimate_tic_tac_toe
                     {
                         switch (locationArray[1])
                         {
-                            case "L": aMove.pos = 6; break;
-                            case "M": aMove.pos = 7; break;
-                            case "R": aMove.pos = 8; break;
+                            case "L":
+                                aMove.row += 1;
+                                aMove.col -= 1; break;
+                            case "M":
+                                aMove.row += 1; break;
+                            case "R":
+                                aMove.row += 1;
+                                aMove.col += 1; break;
                         }
                         break;
                     }

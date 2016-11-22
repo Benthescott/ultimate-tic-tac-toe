@@ -8,7 +8,7 @@ namespace Ultimate_tic_tac_toe
 {
     class Move
     {
-        public int gameNum;
-        public int pos;
+        public int row;
+        public int col;
     }
 }
