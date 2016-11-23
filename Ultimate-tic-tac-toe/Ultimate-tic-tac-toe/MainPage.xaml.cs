@@ -84,10 +84,11 @@ namespace Ultimate_tic_tac_toe
             {
                 if (game.isMiniGameWon())
                 {
-                    if (game.xWon())
+                    if (game.isMiniGameWon())
                     {
                         // Update UI
-
+                        string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
+                        MiniGameWon(gridName);
                     }
                     // Next, check for big game win and act accordingly
                 }
@@ -97,7 +98,7 @@ namespace Ultimate_tic_tac_toe
         /// <summary>
         /// Changes MiniGame board to show X or O won
         /// </summary>
-        /// <param name="targetGridName"></param>
+        /// <param name="targetGridName">Only the beginning of the name is used</param>
         private void MiniGameWon(string targetGridName)
         {
             ImageBrush brush = new ImageBrush();

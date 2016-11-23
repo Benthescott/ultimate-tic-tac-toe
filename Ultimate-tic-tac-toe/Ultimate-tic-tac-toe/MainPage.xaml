@@ -34,7 +34,7 @@
             <!-- Create grids within each of the main grid's cells -->
 
             <!-- Top Left Mini Game Grid -->
-            <Grid Name="topLeftMini" Grid.Row="0" Grid.Column="0" Margin="19,18,5,5">
+            <Grid Name="top_L_mini" Grid.Row="0" Grid.Column="0" Margin="19,18,5,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -60,7 +60,7 @@
             </Grid>
 
             <!-- Top Middle Mini Game Grid -->
-            <Grid Name="topMiddleMini" Grid.Row="0" Grid.Column="1" Margin="5,18,5,0">
+            <Grid Name="top_M_mini" Grid.Row="0" Grid.Column="1" Margin="5,18,5,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -86,7 +86,7 @@
             </Grid>
 
             <!-- Top Right Mini Game Grid -->
-            <Grid Name="topRightMini" Grid.Row="0" Grid.Column="2" Margin="5,18,0,0">
+            <Grid Name="top_R_mini" Grid.Row="0" Grid.Column="2" Margin="5,18,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -113,7 +113,7 @@
 
             <!-- ******************************************************************************* -->
             <!-- Middle Left Mini Game Grid -->
-            <Grid Name="middleLeftMini" Grid.Row="1" Grid.Column="0" Margin="19,5,5,5">
+            <Grid Name="mid_L_mini" Grid.Row="1" Grid.Column="0" Margin="19,5,5,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -139,7 +139,7 @@
             </Grid>
 
             <!-- Middle Middle Mini Game Grid -->
-            <Grid Name="middleMiddleMini" Grid.Row="1" Grid.Column="1" Margin="5">
+            <Grid Name="mid_M_mini" Grid.Row="1" Grid.Column="1" Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -165,7 +165,7 @@
             </Grid>
 
             <!-- Middle Right Mini Game Grid -->
-            <Grid Name="middleRightMini" Grid.Row="1" Grid.Column="2" Margin="5,5,0,5">
+            <Grid Name="mid_R_mini" Grid.Row="1" Grid.Column="2" Margin="5,5,0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -192,7 +192,7 @@
 
             <!-- ****************************************************** -->
             <!-- Bottom Left Mini Game Grid -->
-            <Grid Name="bottomLeftMini" Grid.Row="2" Grid.Column="0" Margin="19,5,5,0">
+            <Grid Name="bot_L_mini" Grid.Row="2" Grid.Column="0" Margin="19,5,5,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -218,7 +218,7 @@
             </Grid>
 
             <!-- Bottom Middle Mini Game Grid -->
-            <Grid Name="bottomMiddleMini" Grid.Row="2" Grid.Column="1" Margin="5">
+            <Grid Name="bot_M_mini" Grid.Row="2" Grid.Column="1" Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -244,7 +244,7 @@
             </Grid>
 
             <!-- Bottom Right Mini Game Grid -->
-            <Grid Name="bottomRightMini" Grid.Row="2" Grid.Column="2" Margin="5,5,0,0">
+            <Grid Name="bot_R_mini" Grid.Row="2" Grid.Column="2" Margin="5,5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
