@@ -95,47 +95,98 @@ namespace Ultimate_tic_tac_toe
         }
         
         /// <summary>
-        /// Adds a line through the 3 winning moves to a mini game.
+        /// Changes MiniGame board to show X or O won
         /// </summary>
         /// <param name="targetGridName"></param>
-        /// <param name="targetBtnName1"></param>
-        /// <param name="targetBtnName2"></param>
-        /// <param name="targetBtnName3"></param>
-        /// <param name="xWon">X won = true, O won = false</param>
-        /// <param name="direction"></param>
-        private void MiniGameWon(string targetGridName, string targetBtnName1, string targetBtnName2, string targetBtnName3, bool xWon, WinDirection direction)
+        private void MiniGameWon(string targetGridName)
         {
-            ImageBrush brush1 = new ImageBrush();
+            ImageBrush brush = new ImageBrush();
 
-            if (xWon)
+            if (game.xWon())
             {
-                switch (direction)
+                foreach (Grid grid in mainGrid.Children)
                 {
-                    case WinDirection.DiagonalDownUp: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal.png")); break;
-                    case WinDirection.DiagonalUpDown: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinDiagonal1.png")); break;
-                    case WinDirection.Horizontal: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinHorizontal.png")); break;
-                    case WinDirection.Vertical: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xWinVertical.png")); break;
+                    if (grid.Name.StartsWith(targetGridName))
+                    {
+                        foreach (Button btn in grid.Children)
+                        {
+                            if (btn.Name.Contains("top_L_btn") || btn.Name.Contains("bot_R_btn"))
+                            {
+                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomRight.png"));
+                                btn.Background = brush;
+                            }
+                            else if (btn.Name.Contains("mid_M_btn"))
+                            {
+                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xMiddle.png"));
+                                btn.Background = brush;
+                            }
+                            else if (btn.Name.Contains("bot_L_btn") || btn.Name.Contains("top_R_btn"))
+                            {
+                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomLeft.png"));
+                                btn.Background = brush;
+                            }
+                        }
+                    }
                 }
             }
             else
             {
-                switch (direction)
+                foreach (Grid grid in mainGrid.Children)
                 {
-                    case WinDirection.DiagonalDownUp: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinDiagonal.png")); break;
-                    case WinDirection.DiagonalUpDown: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinDiagonal1.png")); break;
-                    case WinDirection.Horizontal: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinHorizontal.png")); break;
-                    case WinDirection.Vertical: brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oWinVertical.png")); break;
-                }
-            }
-
-            foreach (Grid grid in mainGrid.Children)
-            {
-                if (grid.Name == targetGridName)
-                {
-                    foreach (Button btn in grid.Children)
+                    if (grid.Name.StartsWith(targetGridName))
                     {
-                        if (btn.Name.Contains(targetBtnName1) || btn.Name.Contains(targetBtnName2) || btn.Name.Contains(targetBtnName3))
-                            btn.Background = brush1;
+                        foreach (Button btn in grid.Children)
+                        {
+                            if (btn.Name.Contains("_top_"))
+                            {
+                                if (btn.Name.EndsWith("_L_btn"))
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopLeft.png"));
+                                    btn.Background = brush;
+                                }
+                                else if (btn.Name.EndsWith("_M_btn"))
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopMiddle.png"));
+                                    btn.Background = brush;
+                                }
+                                else
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopRight.png"));
+                                    btn.Background = brush;
+                                }
+                            }
+                            else if (btn.Name.Contains("_mid_"))
+                            {
+                                if (btn.Name.EndsWith("_L_btn"))
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oLeft.png"));
+                                    btn.Background = brush;
+                                }
+                                else if (btn.Name.EndsWith("_r_btn"))
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oRight.png"));
+                                    btn.Background = brush;
+                                }
+                            }
+                            else if (btn.Name.Contains("_bot_"))
+                            {
+                                if (btn.Name.EndsWith("_L_btn"))
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomLeft.png"));
+                                    btn.Background = brush;
+                                }
+                                else if (btn.Name.EndsWith("_M_btn"))
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomMiddle.png"));
+                                    btn.Background = brush;
+                                }
+                                else
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oMiddleRight.png"));
+                                    btn.Background = brush;
+                                }
+                            }
+                        }
                     }
                 }
             }
