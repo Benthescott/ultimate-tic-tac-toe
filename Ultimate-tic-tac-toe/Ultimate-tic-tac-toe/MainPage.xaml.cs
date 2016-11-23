@@ -268,5 +268,48 @@ namespace Ultimate_tic_tac_toe
         {
             Application.Current.Exit();
         }
+
+        private async void About_clicked(object sender, RoutedEventArgs e)
+        {
+            StackPanel stack = new StackPanel();
+            TextBlock developerBox = new TextBlock() { Text = "Authors: Ethan Carrell, Ben Cline", Margin = new Thickness(0,20,0,10) };
+            stack.Children.Add(developerBox);
+            TextBlock text = new TextBlock() {
+                Text = "Extra:\nStuff about devs and other stuff... Open (or copy the link below into your browser) to view more information about the game",
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Margin = new Thickness(0,15,0,0)
+            };
+            stack.Children.Add(text);
+            HyperlinkButton hyperLink = new HyperlinkButton() { Content = "http://bejofo.net/ttt", NavigateUri = new System.Uri("http://bejofo.net/ttt"),
+                HorizontalAlignment = HorizontalAlignment.Center };
+            stack.Children.Add(hyperLink);
+
+            ContentDialog aboutDialog = new ContentDialog()
+            {
+                Title = "About",
+                Content = stack,
+                PrimaryButtonText = "Ok",
+            };
+
+            await aboutDialog.ShowAsync();
+
+            /*< ContentDialog x: Name = "AboutDialog"
+                        VerticalAlignment = "Stretch"
+                        Title = "About"
+                        PrimaryButtonText = "OK"
+                        IsPrimaryButtonEnabled = "True"
+
+
+                        MaxWidth = "{Binding ActualWidth, ElementName=pageRoot}" RequestedTheme = "Light" Visibility = "Collapsed" >
+    
+                < StackPanel >
+    
+                    < TextBlock Text = "Stuff about devs and other..."
+                            TextWrapping = "Wrap" />
+                < HyperlinkButton > http://bejofo.net/ttt</HyperlinkButton>
+            </ StackPanel >
+
+        </ ContentDialog >*/
+        }
     }
 }
