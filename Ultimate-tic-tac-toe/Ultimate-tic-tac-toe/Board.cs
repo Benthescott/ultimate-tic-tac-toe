@@ -14,7 +14,7 @@ namespace Ultimate_tic_tac_toe
         public Board()
         {
             gameBoard = new char[9, 9];
-            boardStatus = new char[3, 3];
+            boardStatus = new char[9, 9];
             InitializeBoards();
         }
 
@@ -23,13 +23,10 @@ namespace Ultimate_tic_tac_toe
             for (int row = 0; row < 9; row++)
             {
                 for (int col = 0; col < 9; col++)
+                {
                     gameBoard[row, col] = 'B';
-            }
-
-            for (int row = 0; row < 3; row++)
-            {
-                for (int col = 0; col < 3; col++)
                     boardStatus[row, col] = 'B';
+                }
             }
         }
     }

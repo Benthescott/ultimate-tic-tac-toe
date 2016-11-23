@@ -18,6 +18,8 @@ namespace Ultimate_tic_tac_toe
         public Game()
         {
             xTurn = true;       // Player will always be X and go first
+            board = new Board();
+            aMove = new Move();
         }
 
         private void updateBoard()
@@ -28,11 +30,47 @@ namespace Ultimate_tic_tac_toe
                 board.gameBoard[aMove.row, aMove.col] = 'O';
 
             if (isMiniGameWon())
-                if (xWon())
+            {
+                if (xTurn)
                     board.boardStatus[miniGameRowNum, miniGameColNum] = 'X';
                 else
                     board.boardStatus[miniGameRowNum, miniGameColNum] = 'O';
+            }
+            else if (isMiniGameTied())
+            {
+                board.boardStatus[miniGameRowNum, miniGameColNum] = 'T';
+            }
         }
+
+        /// <summary>
+        /// Model helper function (private function). Searches game for empty moves.
+        /// </summary>
+        /// <returns></returns>
+        private bool isMiniGameTied()
+        {
+            /* No win has been detected up to this point when this function is called.
+             *  Check if all moves in mini game have been used. If yes, then it is a TIE.
+            */
+
+            for (int row = miniGameRowNum - 1; row <= miniGameRowNum + 1; row++)
+                for (int col = miniGameColNum - 1; col <= miniGameColNum + 1; col++)
+                    if (board.gameBoard[row, col] == 'B')
+                        return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Only called by controller to determine if the current board is tied. Only checks boardStatus.
+        /// </summary>
+        /// <returns></returns>
+        public bool isBoardTied()
+        {
+            if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'T')
+                return true;
+            else
+                return false;
+        } 
 
         /// <summary>
         /// If a win was detected, this function determines if X was the winner
@@ -53,6 +91,8 @@ namespace Ultimate_tic_tac_toe
                 int gameRow = miniGameRowNum;
                 int gameCol = miniGameColNum;
 
+                gameRow--;
+
                 // Check for a horizontal win
                 for (int i = 0; i < 3; i++)
                 {
@@ -66,23 +106,24 @@ namespace Ultimate_tic_tac_toe
                     gameRow++;
                 }
 
-                // Reset number
+                // Reset numbers
                 gameRow = miniGameRowNum;
+                gameCol--;
 
                 // Check for a vertical win
                 for (int i = 0; i < 3; i++)
                 {
-                    if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
-                        && board.gameBoard[gameRow, gameCol + 1] == 'X')
+                    if (board.gameBoard[gameRow - 1, gameCol] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
+                        && board.gameBoard[gameRow + 1, gameCol] == 'X')
                         return true;                                            // X won vertically
-                    else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
-                        && board.gameBoard[gameRow, gameCol + 1] == 'O')
+                    else if (board.gameBoard[gameRow - 1, gameCol] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
+                        && board.gameBoard[gameRow + 1, gameCol] == 'O')
                         return true;                                            // O won vertically
 
                     gameCol++;
                 }
 
-                // Reset number
+                // Reset numbers
                 gameCol = miniGameColNum;
 
                 // Check for a diagonal win
@@ -98,6 +139,8 @@ namespace Ultimate_tic_tac_toe
                 // If reached, no win condition was detected
                 return false;
             }
+            else if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'T')
+                return false;
             else
                 return true;
         }
@@ -116,18 +159,18 @@ namespace Ultimate_tic_tac_toe
             {
                 if (xTurn)
                 {
-                    xTurn = false;
                     updateBoard();
                     // Do stuff with model (update game board) and anything else necessary to
                     //   process the turn before returning to controller.
+                    xTurn = false;
                     return 'X';
                 }
                 else
                 {
-                    xTurn = true;
                     updateBoard();
                     // Do stuff with model (update game board) and anything else necessary to
                     //   process the turn before returning to controller.
+                    xTurn = true;
                     return 'O';
                 }
             }
@@ -137,10 +180,10 @@ namespace Ultimate_tic_tac_toe
 
         private bool IsValidMove()
         {
-            if (board.gameBoard[aMove.row, aMove.col] != 'B')
-                return false;   //Not a valid move
-            else
+            if (board.gameBoard[aMove.row, aMove.col] == 'B')
                 return true;
+            else
+                return false;    //Not a valid move
         }
 
         private void TranslateBtnName(string location)
@@ -156,14 +199,14 @@ namespace Ultimate_tic_tac_toe
                         switch (locationArray[1])
                         {
                             case "L":
-                                aMove.row = 1;
-                                aMove.col = 1; break;
+                                miniGameRowNum = 1;
+                                miniGameColNum = 1; break;
                             case "M":
-                                aMove.row = 1;
-                                aMove.col = 4; break;
+                                miniGameRowNum = 1;
+                                miniGameColNum = 4; break;
                             case "R":
-                                aMove.row = 1;
-                                aMove.col = 7; break;
+                                miniGameRowNum = 1;
+                                miniGameColNum = 7; break;
                         }
                         break;
                     }
@@ -172,14 +215,14 @@ namespace Ultimate_tic_tac_toe
                         switch (locationArray[1])
                         {
                             case "L":
-                                aMove.row = 4;
-                                aMove.col = 1; break;
+                                miniGameRowNum = 4;
+                                miniGameColNum = 1; break;
                             case "M":
-                                aMove.row = 4;
-                                aMove.col = 4; break;
+                                miniGameRowNum = 4;
+                                miniGameColNum = 4; break;
                             case "R":
-                                aMove.row = 4;
-                                aMove.col = 7; break;
+                                miniGameRowNum = 4;
+                                miniGameColNum = 7; break;
                         }
                         break;
                     }
@@ -188,22 +231,21 @@ namespace Ultimate_tic_tac_toe
                         switch (locationArray[1])
                         {
                             case "L":
-                                aMove.row = 7;
-                                aMove.col = 1; break;
+                                miniGameRowNum = 7;
+                                miniGameColNum = 1; break;
                             case "M":
-                                aMove.row = 7;
-                                aMove.col = 4; break;
+                                miniGameRowNum = 7;
+                                miniGameColNum = 4; break;
                             case "R":
-                                aMove.row = 7;
-                                aMove.col = 7; break;
+                                miniGameRowNum = 7;
+                                miniGameColNum = 7; break;
                         }
                         break;
                     }
             }
 
-            //Capture current minigame location
-            miniGameRowNum = aMove.row;
-            miniGameColNum = aMove.col;
+            aMove.row = miniGameRowNum;
+            aMove.col = miniGameColNum;
 
             //Parse out which location in mini game was played
             switch (locationArray[2])
@@ -225,7 +267,7 @@ namespace Ultimate_tic_tac_toe
                     }
                 case "mid":
                     {
-                        switch (locationArray[1])
+                        switch (locationArray[3])
                         {
                             case "L":
                                 aMove.col -= 1; break;
@@ -236,7 +278,7 @@ namespace Ultimate_tic_tac_toe
                     }
                 case "bot":
                     {
-                        switch (locationArray[1])
+                        switch (locationArray[3])
                         {
                             case "L":
                                 aMove.row += 1;

@@ -273,9 +273,9 @@
     </Grid>
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton Icon="Play" Label="New Game" />
+            <AppBarButton Icon="Play" Label="New Game" Click="NewGame_clicked" />
             <AppBarButton Icon="Setting" Label="About" />
-            <AppBarButton Icon="Cancel" Label="Exit" />            
+            <AppBarButton Icon="Cancel" Label="Exit" Click="Exit_clicked" />            
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

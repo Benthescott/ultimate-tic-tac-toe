@@ -25,18 +25,16 @@ namespace Ultimate_tic_tac_toe
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        enum WinDirection { DiagonalDownUp, DiagonalUpDown, Horizontal, Vertical };
+        //enum WinDirection { DiagonalDownUp, DiagonalUpDown, Horizontal, Vertical };
 
         private Game game;
 
         public MainPage()
         {
             this.InitializeComponent();
+            game = new Game();
             SetUpBoard();
-            MiniGameWon("middleLeftMini", "top_R_btn", "mid_M_btn", "bot_L_btn", false, WinDirection.DiagonalDownUp);
-            MiniGameWon("topLeftMini", "top_M_btn", "mid_M_btn", "bot_M_btn", true, WinDirection.Vertical);
-            MiniGameWon("bottomRightMini", "mid_L_btn", "mid_M_btn", "mid_R_btn", false, WinDirection.Horizontal);
-            MiniGameTied("topRightMini");
+            //MiniGameTied("top_R_mini");
         }
 
         /// <summary>
@@ -84,21 +82,24 @@ namespace Ultimate_tic_tac_toe
             {
                 if (game.isMiniGameWon())
                 {
-                    if (game.isMiniGameWon())
-                    {
-                        // Update UI
-                        string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
-                        MiniGameWon(gridName);
-                    }
-                    // Next, check for big game win and act accordingly
+                    // Update UI
+                    string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
+                    MiniGameWon(gridName);
                 }
+                else if (game.isBoardTied())
+                {
+                    // Update UI
+                    string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
+                    MiniGameTied(gridName);
+                }
+                // Next, check for big game win and act accordingly
             }
         }
         
         /// <summary>
         /// Changes MiniGame board to show X or O won
         /// </summary>
-        /// <param name="targetGridName">Only the beginning of the name is used</param>
+        /// <param name="targetGridName">Only the beginning of the grid name</param>
         private void MiniGameWon(string targetGridName)
         {
             ImageBrush brush = new ImageBrush();
@@ -111,20 +112,29 @@ namespace Ultimate_tic_tac_toe
                     {
                         foreach (Button btn in grid.Children)
                         {
-                            if (btn.Name.Contains("top_L_btn") || btn.Name.Contains("bot_R_btn"))
+                            if (btn.Name.EndsWith("top_L_btn") || btn.Name.EndsWith("bot_R_btn"))
                             {
                                 brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomRight.png"));
                                 btn.Background = brush;
+                                brush = new ImageBrush();
                             }
-                            else if (btn.Name.Contains("mid_M_btn"))
+                            else if (btn.Name.EndsWith("mid_M_btn"))
                             {
                                 brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xMiddle.png"));
                                 btn.Background = brush;
+                                brush = new ImageBrush();
                             }
-                            else if (btn.Name.Contains("bot_L_btn") || btn.Name.Contains("top_R_btn"))
+                            else if (btn.Name.EndsWith("bot_L_btn") || btn.Name.EndsWith("top_R_btn"))
                             {
                                 brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomLeft.png"));
                                 btn.Background = brush;
+                                brush = new ImageBrush();
+                            }
+                            else
+                            {
+                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+                                btn.Background = brush;
+                                brush = new ImageBrush();
                             }
                         }
                     }
@@ -144,16 +154,19 @@ namespace Ultimate_tic_tac_toe
                                 {
                                     brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopLeft.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
                                 else if (btn.Name.EndsWith("_M_btn"))
                                 {
                                     brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopMiddle.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
                                 else
                                 {
                                     brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopRight.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
                             }
                             else if (btn.Name.Contains("_mid_"))
@@ -162,11 +175,19 @@ namespace Ultimate_tic_tac_toe
                                 {
                                     brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oLeft.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
-                                else if (btn.Name.EndsWith("_r_btn"))
+                                else if (btn.Name.EndsWith("_R_btn"))
                                 {
                                     brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oRight.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
+                                }
+                                else
+                                {
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+                                    btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
                             }
                             else if (btn.Name.Contains("_bot_"))
@@ -175,17 +196,26 @@ namespace Ultimate_tic_tac_toe
                                 {
                                     brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomLeft.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
                                 else if (btn.Name.EndsWith("_M_btn"))
                                 {
                                     brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomMiddle.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
                                 else
                                 {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oMiddleRight.png"));
+                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomRight.png"));
                                     btn.Background = brush;
+                                    brush = new ImageBrush();
                                 }
+                            }
+                            else
+                            {
+                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+                                btn.Background = brush;
+                                brush = new ImageBrush();
                             }
                         }
                     }
@@ -196,7 +226,7 @@ namespace Ultimate_tic_tac_toe
         /// <summary>
         /// Displays "TIE" for a mini game.
         /// </summary>
-        /// <param name="targetGridName"></param>
+        /// <param name="targetGridName">Only the beginning of the grid name</param>
         private void MiniGameTied(string targetGridName)
         {
             //Brushes 1-3 are for the images that spell 1 letter of the word "TIE"
@@ -226,6 +256,17 @@ namespace Ultimate_tic_tac_toe
                     }
                 }
             }
+        }
+
+        private void NewGame_clicked(object sender, RoutedEventArgs e)
+        {
+            game = new Game();
+            SetUpBoard();
+        }
+
+        private void Exit_clicked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Exit();
         }
     }
 }
