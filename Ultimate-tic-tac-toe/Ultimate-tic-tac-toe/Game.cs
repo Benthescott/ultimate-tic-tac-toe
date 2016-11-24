@@ -22,6 +22,39 @@ namespace Ultimate_tic_tac_toe
             aMove = new Move();
         }
 
+        /// <summary>
+        /// A capitalized X/O/B is returned for the controller to know if the board needs to be updated.
+        /// on the button clicked on by the user.
+        /// </summary>
+        /// <param name="location">Entire button name</param>
+        /// <returns>Char</returns>
+        public char PlayerMadeMove(string location)
+        {
+            TranslateBtnName(location);
+
+            if (IsValidMove())
+            {
+                if (xTurn)
+                {
+                    updateBoard();
+                    // Do stuff with model (update game board) and anything else necessary to
+                    //   process the turn before returning to controller.
+                    xTurn = false;
+                    return 'X';
+                }
+                else
+                {
+                    updateBoard();
+                    // Do stuff with model (update game board) and anything else necessary to
+                    //   process the turn before returning to controller.
+                    xTurn = true;
+                    return 'O';
+                }
+            }
+            else
+                return 'B';     // Not a valid move
+        }
+
         private void updateBoard()
         {
             if (xTurn)
@@ -37,9 +70,16 @@ namespace Ultimate_tic_tac_toe
                     board.boardStatus[miniGameRowNum, miniGameColNum] = 'O';
             }
             else if (isMiniGameTied())
-            {
                 board.boardStatus[miniGameRowNum, miniGameColNum] = 'T';
-            }
+        }
+
+        /// <summary>
+        /// Determines if big game is over (either a win or tie).
+        /// </summary>
+        /// <returns>A char representing either a win (X or O) or a TIE (T)</returns>
+        public char isGameOver()
+        {
+
         }
 
         /// <summary>
@@ -143,39 +183,6 @@ namespace Ultimate_tic_tac_toe
                 return false;
             else
                 return true;
-        }
-
-        /// <summary>
-        /// A capitalized X/O/B is returned for the controller to know if the board needs to be updated.
-        /// on the button clicked on by the user.
-        /// </summary>
-        /// <param name="location">Entire button name</param>
-        /// <returns>Char</returns>
-        public char PlayerMadeMove(string location)
-        {
-            TranslateBtnName(location);
-
-            if (IsValidMove())
-            {
-                if (xTurn)
-                {
-                    updateBoard();
-                    // Do stuff with model (update game board) and anything else necessary to
-                    //   process the turn before returning to controller.
-                    xTurn = false;
-                    return 'X';
-                }
-                else
-                {
-                    updateBoard();
-                    // Do stuff with model (update game board) and anything else necessary to
-                    //   process the turn before returning to controller.
-                    xTurn = true;
-                    return 'O';
-                }
-            }
-            else
-                return 'B';     // Not a valid move
         }
 
         private bool IsValidMove()
