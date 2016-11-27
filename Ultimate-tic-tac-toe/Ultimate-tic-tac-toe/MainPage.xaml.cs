@@ -53,6 +53,12 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
+        private void RestartGame()
+        {
+            game = new Game();
+            SetUpBoard();
+        }
+
         private void Btn_Click(object sender, RoutedEventArgs e)
         {
             Button clickedBtn = sender as Button;
@@ -92,10 +98,32 @@ namespace Ultimate_tic_tac_toe
                     string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
                     MiniGameTied(gridName);
                 }
+
+                char gameState = game.isGameOver();
                 // Next, check for big game win and act accordingly
+                if (gameState != 'B')
+                    doStuff(gameState);
             }
         }
-        
+
+        private async void doStuff(char winner)
+        {
+            ContentDialog gameOverDialog = new ContentDialog()
+            {
+                Title = "Game Over",
+                Content = "\n" + winner + " won the game!\n\nThe game will now reset.",
+                PrimaryButtonText = "Ok",
+                Opacity = 0.85
+            };
+
+            if (winner == 'T')
+                gameOverDialog.Content = "\nThe game is tied!";
+
+            gameOverDialog.PrimaryButtonClick += GameOverDialog_PrimaryButtonClick;
+
+            await gameOverDialog.ShowAsync();
+        }
+
         /// <summary>
         /// Changes MiniGame board to show X or O won
         /// </summary>
@@ -260,8 +288,7 @@ namespace Ultimate_tic_tac_toe
 
         private void NewGame_clicked(object sender, RoutedEventArgs e)
         {
-            game = new Game();
-            SetUpBoard();
+            RestartGame();
         }
 
         private void Exit_clicked(object sender, RoutedEventArgs e)
@@ -310,6 +337,11 @@ namespace Ultimate_tic_tac_toe
             </ StackPanel >
 
         </ ContentDialog >*/
+        }
+
+        private void GameOverDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            RestartGame();
         }
     }
 }

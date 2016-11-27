@@ -76,10 +76,65 @@ namespace Ultimate_tic_tac_toe
         /// <summary>
         /// Determines if big game is over (either a win or tie).
         /// </summary>
-        /// <returns>A char representing either a win (X or O) or a TIE (T)</returns>
+        /// <returns>A char representing either a win (X or O), a TIE (T), or continue (B)</returns>
         public char isGameOver()
         {
+            // First mini game status to check is located at 1,1 in boardStatus array
+            //      The boards are at 1,1; 1,4; 1,7; 4,1; 4,4; 4,7; etc
+            int col = 1;
+            int row = 1;
 
+            // Check for a vertical win
+            for (; col <= 7; col += 3)
+            {
+                if (board.boardStatus[row, col] == 'X' && board.boardStatus[row + 3, col] == 'X' 
+                    && board.boardStatus[row + 6, col] == 'X')
+                    return 'X';
+                else if (board.boardStatus[row, col] == 'O' && board.boardStatus[row + 3, col] == 'O' 
+                    && board.boardStatus[row + 6, col] == 'O')
+                    return 'O';
+            }
+
+            col = 1;
+
+            // Check for a horizontal win
+            for (row -= 3; row >= 1; row -= 3)
+            {
+                if (board.boardStatus[row, col] == 'X' && board.boardStatus[row, col + 3] == 'X' 
+                    && board.boardStatus[row, col + 6] == 'X')
+                    return 'X';
+                else if (board.boardStatus[row, col] == 'O' && board.boardStatus[row, col + 3] == 'O' 
+                    && board.boardStatus[row, col + 6] == 'O')
+                    return 'O';
+            }
+
+            row = 1;
+
+            // Check for a diagonal win
+            if (board.boardStatus[row, col] == 'X' && board.boardStatus[row + 3, col + 3] == 'X' 
+                && board.boardStatus[row + 6, col + 6] == 'X')
+                return 'X';
+            else if (board.boardStatus[row, col] == 'O' && board.boardStatus[row + 3, col + 3] == 'O'
+                && board.boardStatus[row + 6, col + 6] == 'O')
+                return 'O';
+            else
+            {
+                if (board.boardStatus[row, col + 6] == 'X' && board.boardStatus[row + 3, col + 3] == 'X' 
+                    && board.boardStatus[row + 6, col] == 'X')
+                    return 'X';
+                else if (board.boardStatus[row, col + 6] == 'O' && board.boardStatus[row + 3, col + 3] == 'O' 
+                    && board.boardStatus[row + 6, col] == 'O')
+                    return 'O';
+            }
+
+            // Check TIE condition
+            for (; col <= 7; col += 3)
+                if (!(board.boardStatus[row, col] == 'B' || board.boardStatus[row + 3, col] == 'B' 
+                    || board.boardStatus[row + 6, col] == 'B'))
+                    return 'T';
+
+            // End case: game is not over
+            return 'B';
         }
 
         /// <summary>
@@ -163,7 +218,7 @@ namespace Ultimate_tic_tac_toe
                     gameCol++;
                 }
 
-                // Reset numbers
+                // Reset number
                 gameCol = miniGameColNum;
 
                 // Check for a diagonal win
