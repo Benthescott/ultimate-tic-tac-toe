@@ -125,6 +125,7 @@
     <Content Include="Images\oTopLeft.png" />
     <Content Include="Images\oTopMiddle.png" />
     <Content Include="Images\oTopRight.png" />
+    <Content Include="Images\SmallLogo.targetsize-256_contrast-white.png" />
     <Content Include="Images\t.png" />
     <Content Include="Images\x.png" />
     <Content Include="Images\xBottomLeft.png" />

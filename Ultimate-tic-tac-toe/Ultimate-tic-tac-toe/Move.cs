@@ -10,5 +10,17 @@ namespace Ultimate_tic_tac_toe
     {
         public int row;
         public int col;
+
+        public Move() { }
+
+        /// <summary>
+        /// Customized constructor
+        /// </summary>
+        /// <param name="x">Row</param>
+        /// <param name="y">Column</param>
+        public Move(int x, int y) {
+            row = x;
+            col = y;
+        }
     }
 }

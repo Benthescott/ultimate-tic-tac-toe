@@ -12,6 +12,7 @@ namespace Ultimate_tic_tac_toe
         private Board board;
         private bool xTurn;
         private Move aMove;
+        private Move nextMiniGame;
         private int miniGameRowNum;
         private int miniGameColNum;
 
@@ -20,6 +21,7 @@ namespace Ultimate_tic_tac_toe
             xTurn = true;       // Player will always be X and go first
             board = new Board();
             aMove = new Move();
+            nextMiniGame = new Move(0,0);
         }
 
         /// <summary>
@@ -32,8 +34,17 @@ namespace Ultimate_tic_tac_toe
         {
             TranslateBtnName(location);
 
+            if (nextMiniGame.row != 0 && board.boardStatus[nextMiniGame.row, nextMiniGame.col] != 'B')
+            {
+                // Player has been sent to a won or tied game; player may move anywhere
+                nextMiniGame.row = 0;
+                nextMiniGame.col = 0;
+            }
+
             if (IsValidMove())
             {
+                StoreNextGameMove(location);
+
                 if (xTurn)
                 {
                     updateBoard();
@@ -53,6 +64,21 @@ namespace Ultimate_tic_tac_toe
             }
             else
                 return 'B';     // Not a valid move
+        }
+
+        private bool IsValidMove()
+        {
+            // Check if desired move is located in the required mini game and if move is available
+            if (aMove.row == nextMiniGame.row - 1 || aMove.row == nextMiniGame.row + 1 || aMove.row == nextMiniGame.row)
+                if (aMove.col == nextMiniGame.col - 1 || aMove.col == nextMiniGame.col + 1 || aMove.col == nextMiniGame.col)
+                    if (board.gameBoard[aMove.row, aMove.col] == 'B')
+                        return true;    // Valid move
+
+            // If the player may move anywhere and move is available, then move is valid
+            if (nextMiniGame.row == 0 && board.gameBoard[aMove.row, aMove.col] == 'B')
+                return true;        // Valid move
+            else
+                return false;       // Not a valid move
         }
 
         private void updateBoard()
@@ -95,6 +121,7 @@ namespace Ultimate_tic_tac_toe
                     return 'O';
             }
 
+            // Reset number
             col = 1;
 
             // Check for a horizontal win
@@ -108,6 +135,7 @@ namespace Ultimate_tic_tac_toe
                     return 'O';
             }
 
+            // Reset number
             row = 1;
 
             // Check for a diagonal win
@@ -144,8 +172,7 @@ namespace Ultimate_tic_tac_toe
         private bool isMiniGameTied()
         {
             /* No win has been detected up to this point when this function is called.
-             *  Check if all moves in mini game have been used. If yes, then it is a TIE.
-            */
+                  Check if all moves in mini game have been used. If yes, then it is a TIE. */
 
             for (int row = miniGameRowNum - 1; row <= miniGameRowNum + 1; row++)
                 for (int col = miniGameColNum - 1; col <= miniGameColNum + 1; col++)
@@ -240,19 +267,10 @@ namespace Ultimate_tic_tac_toe
                 return true;
         }
 
-        private bool IsValidMove()
-        {
-            if (board.gameBoard[aMove.row, aMove.col] == 'B')
-                return true;
-            else
-                return false;    //Not a valid move
-        }
-
         private void TranslateBtnName(string location)
         {
             String[] locationArray = location.Split('_');
 
-            #region Initializing playerMove by parsing button name
             //Parse out which mini game was played in
             switch (locationArray[0])
             {
@@ -354,7 +372,23 @@ namespace Ultimate_tic_tac_toe
                         break;
                     }
             }
-            #endregion
+        }
+
+        private void StoreNextGameMove(string currentMoveLoc)
+        {
+            if (currentMoveLoc.Contains("_top_"))
+                nextMiniGame.row = 1;
+            else if (currentMoveLoc.Contains("_mid_"))
+                nextMiniGame.row = 4;
+            else
+                nextMiniGame.row = 7;
+
+            if (currentMoveLoc.EndsWith("_L_btn"))
+                nextMiniGame.col = 1;
+            else if (currentMoveLoc.EndsWith("_M_btn"))
+                nextMiniGame.col = 4;
+            else
+                nextMiniGame.col = 7;
         }
     }
 }

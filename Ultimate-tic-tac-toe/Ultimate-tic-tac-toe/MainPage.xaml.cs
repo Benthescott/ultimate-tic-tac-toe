@@ -31,10 +31,8 @@ namespace Ultimate_tic_tac_toe
 
         public MainPage()
         {
-            this.InitializeComponent();
-            game = new Game();
-            SetUpBoard();
-            //MiniGameTied("top_R_mini");
+            InitializeComponent();
+            RestartGame();
         }
 
         /// <summary>
@@ -43,14 +41,12 @@ namespace Ultimate_tic_tac_toe
         private void SetUpBoard()
         {
             foreach (Grid grid in mainGrid.Children)
-            {
                 foreach (Button btn in grid.Children)
                 {
                     ImageBrush brush1 = new ImageBrush();
                     brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
                     btn.Background = brush1;
                 }
-            }
         }
 
         private void RestartGame()
@@ -62,10 +58,6 @@ namespace Ultimate_tic_tac_toe
         private void Btn_Click(object sender, RoutedEventArgs e)
         {
             Button clickedBtn = sender as Button;
-
-            //var dialog = new MessageDialog("You clicked " + clickedBtn.Name);
-            //await dialog.ShowAsync();
-
             char imgVar = game.PlayerMadeMove(clickedBtn.Name);
             bool uiHasChanged = false;
 
@@ -74,7 +66,9 @@ namespace Ultimate_tic_tac_toe
                 ImageBrush brush1 = new ImageBrush();
                 brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
                 clickedBtn.Background = brush1;
-                uiHasChanged = true;                
+                uiHasChanged = true;
+                turnText.Text = "O's turn";
+                locationText.Text = NextMiniGameLoc(clickedBtn.Name);
             }
             else if (imgVar == 'O')
             {
@@ -82,6 +76,8 @@ namespace Ultimate_tic_tac_toe
                 brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
                 clickedBtn.Background = brush1;
                 uiHasChanged = true;
+                turnText.Text = "X's turn";
+                locationText.Text = NextMiniGameLoc(clickedBtn.Name);
             }
 
             if (uiHasChanged)
@@ -102,14 +98,13 @@ namespace Ultimate_tic_tac_toe
                 char gameState = game.isGameOver();
                 // Next, check for big game win and act accordingly
                 if (gameState != 'B')
-                    doStuff(gameState);
+                    GameOver(gameState);
             }
         }
 
-        private async void doStuff(char winner)
+        private async void GameOver(char winner)
         {
-            ContentDialog gameOverDialog = new ContentDialog()
-            {
+            ContentDialog gameOverDialog = new ContentDialog() {
                 Title = "Game Over",
                 Content = "\n" + winner + " won the game!\n\nThe game will now reset.",
                 PrimaryButtonText = "Ok",
@@ -135,9 +130,7 @@ namespace Ultimate_tic_tac_toe
             if (game.xWon())
             {
                 foreach (Grid grid in mainGrid.Children)
-                {
                     if (grid.Name.StartsWith(targetGridName))
-                    {
                         foreach (Button btn in grid.Children)
                         {
                             if (btn.Name.EndsWith("top_L_btn") || btn.Name.EndsWith("bot_R_btn"))
@@ -165,15 +158,11 @@ namespace Ultimate_tic_tac_toe
                                 brush = new ImageBrush();
                             }
                         }
-                    }
-                }
             }
             else
             {
                 foreach (Grid grid in mainGrid.Children)
-                {
                     if (grid.Name.StartsWith(targetGridName))
-                    {
                         foreach (Button btn in grid.Children)
                         {
                             if (btn.Name.Contains("_top_"))
@@ -246,8 +235,6 @@ namespace Ultimate_tic_tac_toe
                                 brush = new ImageBrush();
                             }
                         }
-                    }
-                }
             }
         }
 
@@ -286,6 +273,33 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
+        /// <summary>
+        /// This function returns the name of the minigame that must be played in next.
+        /// </summary>
+        /// <param name="btnName">Full button name</param>
+        /// <returns></returns>
+        private string NextMiniGameLoc(string btnName)
+        {
+            string targetGameName = "Next move in ";
+
+            if (btnName.Contains("_top_"))
+                targetGameName += "Top ";
+            else if (btnName.Contains("_mid_"))
+                targetGameName += "Middle ";
+            else
+                targetGameName += "Bottom ";
+
+            if (btnName.EndsWith("_L_btn"))
+                targetGameName += "Left";
+            else if (btnName.EndsWith("_M_btn"))
+                targetGameName += "Middle";
+            else
+                targetGameName += "Right";
+
+            targetGameName += " mini game";
+            return targetGameName;
+        }
+
         private void NewGame_clicked(object sender, RoutedEventArgs e)
         {
             RestartGame();
@@ -311,32 +325,13 @@ namespace Ultimate_tic_tac_toe
                 HorizontalAlignment = HorizontalAlignment.Center };
             stack.Children.Add(hyperLink);
 
-            ContentDialog aboutDialog = new ContentDialog()
-            {
+            ContentDialog aboutDialog = new ContentDialog() {
                 Title = "About",
                 Content = stack,
                 PrimaryButtonText = "Ok",
             };
 
             await aboutDialog.ShowAsync();
-
-            /*< ContentDialog x: Name = "AboutDialog"
-                        VerticalAlignment = "Stretch"
-                        Title = "About"
-                        PrimaryButtonText = "OK"
-                        IsPrimaryButtonEnabled = "True"
-
-
-                        MaxWidth = "{Binding ActualWidth, ElementName=pageRoot}" RequestedTheme = "Light" Visibility = "Collapsed" >
-    
-                < StackPanel >
-    
-                    < TextBlock Text = "Stuff about devs and other..."
-                            TextWrapping = "Wrap" />
-                < HyperlinkButton > http://bejofo.net/ttt</HyperlinkButton>
-            </ StackPanel >
-
-        </ ContentDialog >*/
         }
 
         private void GameOverDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
