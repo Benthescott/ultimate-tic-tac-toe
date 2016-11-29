@@ -10,22 +10,38 @@ namespace Ultimate_tic_tac_toe
     {
 
         private bool IsMaxPlayer;
-        public Move SelectedMove;
 
-        public char turn;
-        public int boardSelected;
-
-        public AlphaBeta(char playerTurn, int selected)
+        public AlphaBeta()
         {
             IsMaxPlayer = true;
-            SelectedMove = new Move();
-            turn = playerTurn;
-            boardSelected = selected;
         }
 
-        public Move MakeMove()
+        private Node ConvertToNode(Board b)
         {
-            return new Move();
+            Node n = new Node();
+
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    n.board.gameBoard[i, j] = b.gameBoard[i, j];
+                }
+            }
+
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    n.board.boardStatus[i, j] = b.boardStatus[i, j];
+                }
+            }
+
+            return n;
+        }
+
+        public void MakeMove(Board b, Move s)
+        {
+            int value = AB(ConvertToNode(b), 100, int.MinValue, int.MaxValue, true);
         }
 
         /// <summary>
@@ -39,20 +55,20 @@ namespace Ultimate_tic_tac_toe
         /// <param name="beta"></param>
         /// <param name="player"></param>
         /// <returns></returns>
-        public int Loop(Node currentNode, int depth, int alpha, int beta, bool player)
+        public int AB(Node currentNode, int depth, int alpha, int beta, bool player)
         {
             // If we have drilled down to the max depth, or we found a leaf node,
             // evaluate the node.
-            if (depth == 0 || currentNode.IsTerminalNode(player))
+            if (depth == 0 || currentNode.IsTerminalNode(currentNode, depth))
             {
                 return currentNode.evaluate(player);
             }
 
             if (player == this.IsMaxPlayer)
             {
-                foreach (Node child in currentNode.Children(player))
+                foreach (Node child in currentNode.CreateSubtree(player))
                 {
-                    alpha = Math.Max(alpha, Loop(child, depth - 1, alpha, beta, !player));
+                    alpha = Math.Max(alpha, AB(child, depth - 1, alpha, beta, !player));
                     if (beta <= alpha)
                     {
                         break;
@@ -63,9 +79,9 @@ namespace Ultimate_tic_tac_toe
             }
             else
             {
-                foreach (Node child in currentNode.Children(player))
+                foreach (Node child in currentNode.CreateSubtree(player))
                 {
-                    beta = Math.Min(beta, Loop(child, depth - 1, alpha, beta, !player));
+                    beta = Math.Min(beta, AB(child, depth - 1, alpha, beta, !player));
 
                     if (beta <= alpha)
                     {
