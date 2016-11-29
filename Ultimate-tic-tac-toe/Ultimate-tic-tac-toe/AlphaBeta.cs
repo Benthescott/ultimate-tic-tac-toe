@@ -23,6 +23,11 @@ namespace Ultimate_tic_tac_toe
             boardSelected = selected;
         }
 
+        public Move MakeMove()
+        {
+            return new Move();
+        }
+
         /// <summary>
         /// 
         ///     This function is the main control loop for the alpha beta algorithm.
@@ -38,7 +43,7 @@ namespace Ultimate_tic_tac_toe
         {
             // If we have drilled down to the max depth, or we found a leaf node,
             // evaluate the node.
-            if (depth == 0 || currentNode.IsTerminalNode())
+            if (depth == 0 || currentNode.IsTerminalNode(player))
             {
                 return currentNode.evaluate(player);
             }
@@ -47,12 +52,11 @@ namespace Ultimate_tic_tac_toe
             {
                 foreach (Node child in currentNode.Children(player))
                 {
-                    alpha = Math.Max(alpha, Loop(child, depth + 1, alpha, beta, !player));
-                    if (beta < alpha)
+                    alpha = Math.Max(alpha, Loop(child, depth - 1, alpha, beta, !player));
+                    if (beta <= alpha)
                     {
                         break;
                     }
-
                 }
 
                 return alpha;
@@ -61,9 +65,9 @@ namespace Ultimate_tic_tac_toe
             {
                 foreach (Node child in currentNode.Children(player))
                 {
-                    beta = Math.Min(beta, Loop(child, depth + 1, alpha, beta, !player));
+                    beta = Math.Min(beta, Loop(child, depth - 1, alpha, beta, !player));
 
-                    if (beta < alpha)
+                    if (beta <= alpha)
                     {
                         break;
                     }
