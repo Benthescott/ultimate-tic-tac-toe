@@ -9,19 +9,40 @@ namespace Ultimate_tic_tac_toe
     class Node
     {
         private Board board;
-        private int alpha;
-        private int beta;
-        private int value;
 
-        public char turn;
-        public int boardSelected;
-
-
-
-        public Node(char t, int selected)
+        public Node()
         {
-            this.turn = t;
-            this.boardSelected = selected;
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Player"></param>
+        /// <returns></returns>
+        public List<Node> CreateSubtree(bool Player)
+        {
+            List<Node> children = new List<Node>();
+
+            /// TODO Create subtree here and return the results
+
+            return children;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Player"></param>
+        /// <returns></returns>
+        public bool IsTerminalNode(bool Player)
+        {
+            bool terminalNode = false;
+
+            /// TODO Check if game is over
+
+            return terminalNode;
         }
 
         /// <summary>
@@ -41,11 +62,11 @@ namespace Ultimate_tic_tac_toe
         ///     of the node.
         /// 
         /// </returns>
-        private int evaluate(Node node)
+        public int evaluate()
         {
             int result = 0;
 
-            // TODO make function body
+            /// TODO make function body
 
             return result;
         }
