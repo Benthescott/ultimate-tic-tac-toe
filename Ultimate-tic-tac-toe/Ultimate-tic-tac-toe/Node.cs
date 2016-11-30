@@ -8,67 +8,28 @@ namespace Ultimate_tic_tac_toe
 {
     class Node
     {
-        private Board board;
+        public Move CurrentMove;
+        public int Value;
 
         public Node()
         {
-
+            this.CurrentMove = new Move();
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Player"></param>
-        /// <returns></returns>
-        public List<Node> CreateSubtree(bool Player)
+        public Node(Move m)
         {
-            List<Node> children = new List<Node>();
+            this.CurrentMove = new Move();
 
-            /// TODO Create subtree here and return the results
-
-            return children;
+            this.CurrentMove.row = m.row;
+            this.CurrentMove.col = m.col;
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Player"></param>
-        /// <returns></returns>
-        public bool IsTerminalNode(bool Player)
+        public Node(int x, int y)
         {
-            bool terminalNode = false;
+            this.CurrentMove = new Move();
 
-            /// TODO Check if game is over
-
-            return terminalNode;
-        }
-
-        /// <summary>
-        /// 
-        ///     This function statically evaluates the value of a given node in
-        ///     the tree.
-        /// 
-        /// </summary>
-        /// <param name="node">
-        /// 
-        ///     Node to be evaluated.
-        ///     
-        /// </param>
-        /// <returns>
-        /// 
-        ///     Returns the numeric value
-        ///     of the node.
-        /// 
-        /// </returns>
-        public int evaluate()
-        {
-            int result = 0;
-
-            /// TODO make function body
-
-            return result;
+            this.CurrentMove.row = x;
+            this.CurrentMove.col = y;
         }
     }
 }
