@@ -16,8 +16,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="turnText" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="This is a test" TextWrapping="Wrap" Margin="0,40,350,0" FontSize="22" />
-        <TextBlock x:Name="locationText" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Location" TextWrapping="Wrap" Margin="200,40,0,0" FontSize="22" />
+        <TextBlock x:Name="turnText" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="X's turn" TextWrapping="Wrap" Margin="0,40,350,0" FontSize="22" />
+        <TextBlock x:Name="locationText" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="X may select any move" TextWrapping="Wrap" Margin="200,40,0,0" FontSize="22" />
 
         <Grid Name="mainGrid" Grid.Row="1" Grid.Column="0" Background="Black" Width="700" Height="700" Margin="25,0,0,0">
             <Grid.ColumnDefinitions>

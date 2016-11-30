@@ -38,6 +38,9 @@ namespace Ultimate_tic_tac_toe
         {
             // If we have drilled down to the max depth, or we found a leaf node,
             // evaluate the node.
+
+            return 0;
+            
             if (depth == 0 || currentNode.IsTerminalNode())
             {
                 return currentNode.evaluate(player);
@@ -71,6 +74,7 @@ namespace Ultimate_tic_tac_toe
 
                 return beta;
             }
+            
         }
     }
 }

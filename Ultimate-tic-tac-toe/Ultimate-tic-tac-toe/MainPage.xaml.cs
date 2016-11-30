@@ -63,22 +63,24 @@ namespace Ultimate_tic_tac_toe
 
             if (imgVar == 'X')
             {
-                ImageBrush brush1 = new ImageBrush();
-                brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
-                clickedBtn.Background = brush1;
+                ImageBrush brush = new ImageBrush();
+                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
+                clickedBtn.Background = brush;
                 uiHasChanged = true;
                 turnText.Text = "O's turn";
                 locationText.Text = NextMiniGameLoc(clickedBtn.Name);
             }
             else if (imgVar == 'O')
             {
-                ImageBrush brush1 = new ImageBrush();
-                brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
-                clickedBtn.Background = brush1;
+                ImageBrush brush = new ImageBrush();
+                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
+                clickedBtn.Background = brush;
                 uiHasChanged = true;
                 turnText.Text = "X's turn";
                 locationText.Text = NextMiniGameLoc(clickedBtn.Name);
             }
+
+            // If next game location is mini game that has been won or tied, change next location label appropriately
 
             if (uiHasChanged)
             {
@@ -86,6 +88,7 @@ namespace Ultimate_tic_tac_toe
                 {
                     // Update UI
                     string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
+                    
                     MiniGameWon(gridName);
                 }
                 else if (game.isBoardTied())
