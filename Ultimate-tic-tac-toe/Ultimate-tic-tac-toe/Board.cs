@@ -137,6 +137,22 @@ namespace Ultimate_tic_tac_toe
             return 'N';
         }
 
+        private Tuple<bool, char> CheckTie(char[,] board)
+        {
+            // If a mini game is still in progress then return false, 'N'
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 3; col++)
+                    if (board[row, col] == 'B')
+                        return new Tuple<bool, char>(false, 'N');
+
+            return new Tuple<bool, char>(true, 'T');
+        }
+
+        /// <summary>
+        /// Returns true/false if game is won and a char for who won
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
         public Tuple<bool, char> BoardComplete(char[,] board)
         {
             List<char> results = new List<char>();
@@ -151,7 +167,7 @@ namespace Ultimate_tic_tac_toe
             else if (results.Find(x => x == 'O') == 'O')
                 return new Tuple<bool, char>(true, 'O');
             else
-                return new Tuple<bool, char>(false, 'N');
+                return CheckTie(board);
 
         }
 

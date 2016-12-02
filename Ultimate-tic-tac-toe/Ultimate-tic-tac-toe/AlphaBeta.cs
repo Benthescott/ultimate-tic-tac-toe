@@ -44,7 +44,12 @@ namespace Ultimate_tic_tac_toe
 
         private bool IsTerminal(bool Player, Node node)
         {
-            
+            if (node.Depth == 100)
+                return true;
+            else if (BoardState.BoardComplete(BoardState.Main).Item1)
+                return true;
+            else
+                return false;
         }
 
         private int evaluate(bool Player)
