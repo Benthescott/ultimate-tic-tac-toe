@@ -10,15 +10,17 @@ namespace Ultimate_tic_tac_toe
     class Game
     {
         private Board board;
-        private bool xTurn;
         private Move aMove;
         private Move nextMiniGame;
         private int miniGameRowNum;
         private int miniGameColNum;
+        private bool xTurn;
+        private bool isMoveUnlimited;
 
         public Game()
         {
-            xTurn = true;       // Player will always be X and go first
+            xTurn = true;           // Player will always be X and go first
+            isMoveUnlimited = true; // Player may choose any move at the beginning of the game
             board = new Board();
             aMove = new Move();
             nextMiniGame = new Move(0,0);
@@ -34,16 +36,14 @@ namespace Ultimate_tic_tac_toe
         {
             TranslateBtnName(location);
 
-            if (nextMiniGame.row != 0 && board.boardStatus[nextMiniGame.row, nextMiniGame.col] != 'B')
-            {
-                // Player has been sent to a won or tied game; player may move anywhere
-                nextMiniGame.row = 0;
-                nextMiniGame.col = 0;
-            }
-
             if (IsValidMove())
             {
                 StoreNextGameMove(location);
+
+                if (board.boardStatus[nextMiniGame.row, nextMiniGame.col] == 'B')
+                    isMoveUnlimited = false;
+                else
+                    isMoveUnlimited = true;
 
                 if (xTurn)
                 {
@@ -68,17 +68,21 @@ namespace Ultimate_tic_tac_toe
 
         private bool IsValidMove()
         {
+            // If mini game has been finished, do not allow move within mini game
+            if (board.boardStatus[miniGameRowNum, miniGameColNum] != 'B')
+                return false;
+
+            // If the player may move anywhere and move is available; then move is valid
+            if (isMoveUnlimited && board.gameBoard[aMove.row, aMove.col] == 'B')
+                return true;        // Valid move
+
             // Check if desired move is located in the required mini game and if move is available
             if (aMove.row == nextMiniGame.row - 1 || aMove.row == nextMiniGame.row + 1 || aMove.row == nextMiniGame.row)
                 if (aMove.col == nextMiniGame.col - 1 || aMove.col == nextMiniGame.col + 1 || aMove.col == nextMiniGame.col)
                     if (board.gameBoard[aMove.row, aMove.col] == 'B')
                         return true;    // Valid move
 
-            // If the player may move anywhere and move is available, then move is valid
-            if (nextMiniGame.row == 0 && board.gameBoard[aMove.row, aMove.col] == 'B')
-                return true;        // Valid move
-            else
-                return false;       // Not a valid move
+            return false;       // Not a valid move
         }
 
         private void updateBoard()
