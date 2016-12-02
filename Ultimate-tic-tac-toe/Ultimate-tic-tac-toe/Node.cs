@@ -15,6 +15,9 @@ namespace Ultimate_tic_tac_toe
         // Depth of node in tree
         public short Depth { get; set; }
 
+        // If main board was changed
+        public bool MainChanged = false;
+
         // The board, 0-8, played on
         public short BoardNumberPlayedOn { get; set; }
 
@@ -36,6 +39,7 @@ namespace Ultimate_tic_tac_toe
             this.BoardNumberPlayedOn = n.BoardNumberPlayedOn;
             this.BoardNumberToPlayOn = n.BoardNumberToPlayOn;
             this.Player = n.Player;
+            this.MainChanged = n.MainChanged;
         }
 
         public Node(short depth, short BNTPO, bool player)
