@@ -18,9 +18,17 @@ namespace Ultimate_tic_tac_toe
         /// </summary>
         /// <param name="x">Row</param>
         /// <param name="y">Column</param>
-        public Move(int x, int y) {
+        public Move(int x, int y)
+        {
             row = x;
             col = y;
         }
+
+        public Move(Move m)
+        {
+            row = m.row;
+            col = m.col;
+        }
+
     }
 }
