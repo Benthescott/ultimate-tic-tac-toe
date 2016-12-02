@@ -154,5 +154,26 @@ namespace Ultimate_tic_tac_toe
                 return new Tuple<bool, char>(false, 'N');
 
         }
+
+        /// <summary>
+        /// Returns the x,y coordinate of a board
+        /// </summary>
+        /// <param name="boardNum">Board number (0-8)</param>
+        /// <returns></returns>
+        public Tuple<short, short> BoardCoord(int boardNum)
+        {
+            switch(boardNum)
+            {
+                case 0: return new Tuple<short, short>(0, 0);
+                case 1: return new Tuple<short, short>(0, 1);
+                case 2: return new Tuple<short, short>(0, 2);
+                case 3: return new Tuple<short, short>(1, 0);
+                case 4: return new Tuple<short, short>(1, 1);
+                case 5: return new Tuple<short, short>(1, 2);
+                case 6: return new Tuple<short, short>(2, 0);
+                case 7: return new Tuple<short, short>(2, 1);
+                default: return new Tuple<short, short>(2, 2);
+            }
+        }
     }
 }

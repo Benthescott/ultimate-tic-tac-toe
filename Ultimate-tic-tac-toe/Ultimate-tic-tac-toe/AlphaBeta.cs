@@ -36,15 +36,18 @@ namespace Ultimate_tic_tac_toe
 
         private void UndoMove(Node n)
         {
-
+            BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'B';
+            if (n.MainChanged)
+                BoardState.Main[BoardState.BoardCoord(n.BoardNumberPlayedOn).Item1,
+                    BoardState.BoardCoord(n.BoardNumberPlayedOn).Item2] = 'B';
         }
 
         private bool IsTerminal(bool Player, Node node)
         {
-
+            
         }
 
-        private int evaluate(Player)
+        private int evaluate(bool Player)
         {
 
         }
