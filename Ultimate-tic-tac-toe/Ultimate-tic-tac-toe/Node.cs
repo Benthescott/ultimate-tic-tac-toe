@@ -39,6 +39,7 @@ namespace Ultimate_tic_tac_toe
             this.BoardNumberPlayedOn = n.BoardNumberPlayedOn;
             this.BoardNumberToPlayOn = n.BoardNumberToPlayOn;
             this.Player = n.Player;
+            this.MainChanged = n.MainChanged;
         }
 
         public Node(short depth, short BNTPO, bool player)
