@@ -31,7 +31,33 @@ namespace Ultimate_tic_tac_toe
 
         private Node MakeMove(bool player, short boardNum)
         {
-            return new Node();
+            // Make new node
+            Node node = new Node();
+
+            if (player == this.MaxPlayer)
+            {
+                // Make any 'B' space on boardNum 'O'
+                // Increment this.TreeDepth
+                // set row/col in node equal to move made
+                // set node.Depth = this.depth
+                // If move made caused Main Board to change, set node.MainChanged to true
+                // set node.BoardNumberPlayedOn = to boardNum
+                // set node.BoardNumberToPlayOn = board opponent must play on next
+                // set node.Player = player
+            }
+            else
+            {
+                // Make any 'B' space on boardNum 'X'
+                // Increment this.TreeDepth
+                // set row/col in node equal to move made
+                // set node.Depth = this.depth
+                // If move made caused Main Board to change, set node.MainChanged to true
+                // set node.BoardNumberPlayedOn = to boardNum
+                // set node.BoardNumberToPlayOn = board opponent must play on next
+                // set node.Player = player
+            }
+
+            return node;
         }
 
         private void UndoMove(Node n)
@@ -39,7 +65,7 @@ namespace Ultimate_tic_tac_toe
             BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'B';
             if (n.MainChanged)
                 BoardState.Main[BoardState.BoardCoord(n.BoardNumberPlayedOn).Item1,
-                    BoardState.BoardCoord(n.BoardNumberPlayedOn).Item2] = 'B';
+                                BoardState.BoardCoord(n.BoardNumberPlayedOn).Item2] = 'B';
         }
 
         private bool IsTerminal(bool Player, Node node)
@@ -54,13 +80,15 @@ namespace Ultimate_tic_tac_toe
 
         private int evaluate(bool Player)
         {
-
+            return 1;
         }
 
         private int AB(Node node, int depth, int alpha, int beta, bool player)
         {
             if (depth == 0 || IsTerminal(player, node))
             {
+                // Stack is unwinding, undo last move
+                this.UndoMove(node);
                 return evaluate(player);
             }
 
@@ -78,6 +106,7 @@ namespace Ultimate_tic_tac_toe
                 }
 
                 // Stack is unwinding, undo last move
+                this.UndoMove(node);
                 return alpha;
             }
             else
@@ -94,6 +123,7 @@ namespace Ultimate_tic_tac_toe
                 }
 
                 // Stack is unwinding, undo last move
+                this.UndoMove(node);
                 return beta;
             }
             
