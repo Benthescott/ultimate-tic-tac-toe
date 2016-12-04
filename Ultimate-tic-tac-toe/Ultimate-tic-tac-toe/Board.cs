@@ -49,8 +49,8 @@ namespace Ultimate_tic_tac_toe
 
         private char CheckRightDiaganolWin(char[,] board)
         {
-            int xPlayer = 0;
-            int oPlayer = 0;
+            short xPlayer = 0;
+            short oPlayer = 0;
 
             for (short row = 0; row < 3; row++)
                 for (short col = 0; col < 3; col++)
@@ -71,8 +71,8 @@ namespace Ultimate_tic_tac_toe
 
         private char CheckLeftDiaganolWin(char[,] board)
         {
-            int xPlayer = 0;
-            int oPlayer = 0;
+            short xPlayer = 0;
+            short oPlayer = 0;
 
             for (short row = 0; row < 3; row++)
                 for (short col = 0; col < 3; col++)
@@ -91,10 +91,10 @@ namespace Ultimate_tic_tac_toe
             return 'N';
         }
 
-        private char CheckRowWin(char[,] board, int row)
+        private char CheckRowWin(char[,] board, short row)
         {
-            int xPlayer = 0;
-            int oPlayer = 0;
+            short xPlayer = 0;
+            short oPlayer = 0;
 
             for (short col = 0; col < 3; col++)
             {
@@ -114,10 +114,10 @@ namespace Ultimate_tic_tac_toe
             return 'N';
         }
 
-        private char CheckColWin(char[,] board, int col)
+        private char CheckColWin(char[,] board, short col)
         {
-            int xPlayer = 0;
-            int oPlayer = 0;
+            short xPlayer = 0;
+            short oPlayer = 0;
 
             for (short row = 0; row < 3; row++)
             {
@@ -140,8 +140,8 @@ namespace Ultimate_tic_tac_toe
         private Tuple<bool, char> CheckTie(char[,] board)
         {
             // If a mini game is still in progress then return false, 'N'
-            for (int row = 0; row < 3; row++)
-                for (int col = 0; col < 3; col++)
+            for (short row = 0; row < 3; row++)
+                for (short col = 0; col < 3; col++)
                     if (board[row, col] == 'B')
                         return new Tuple<bool, char>(false, 'N');
 
