@@ -12,6 +12,9 @@ namespace Ultimate_tic_tac_toe
         public short Row { get; set; }
         public short Col { get; set; }
 
+        // Value of the node
+        public short Value;
+
         // Depth of node in tree
         public short Depth { get; set; }
 
@@ -41,6 +44,7 @@ namespace Ultimate_tic_tac_toe
             this.BoardNumberToPlayOn = n.BoardNumberToPlayOn;
             this.Player = n.Player;
             this.MainChanged = n.MainChanged;
+            this.Value = n.Value;
         }
 
         public Node(short depth, short BNTPO, bool player)

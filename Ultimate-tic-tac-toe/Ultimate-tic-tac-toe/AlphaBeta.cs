@@ -12,6 +12,7 @@ namespace Ultimate_tic_tac_toe
         private bool MaxPlayer = true;
         private short TreeDepth;
         private short MaxTreeDepth;
+        private List<Node> nodes;
 
         public AlphaBeta()
         {
@@ -22,6 +23,7 @@ namespace Ultimate_tic_tac_toe
             this.TreeDepth = 0;
             this.BoardState = new Board(b);
             this.MaxTreeDepth = depth;
+            nodes = new List<Node>();
 
             short result = this.AB(new Node(this.TreeDepth, boardNum, this.MaxPlayer), depth, short.MinValue, short.MaxValue, MaxPlayer);
 
@@ -216,9 +218,10 @@ namespace Ultimate_tic_tac_toe
 
         private bool IsTerminal(bool Player, Node node)
         {
-            if (node.Depth == 100)
+
+            if (BoardState.BoardComplete(BoardState.Main).Item1)
                 return true;
-            else if (BoardState.BoardComplete(BoardState.Main).Item1)
+            else if (node.Depth == 100)
                 return true;
             else
                 return false;
@@ -358,7 +361,9 @@ namespace Ultimate_tic_tac_toe
         {
             if (depth == 0 || IsTerminal(player, node))
             {
-                return Evaluate(player);
+                node.Value = this.Evaluate(player);
+                this.UndoMove(node);
+                return node.Value;
             }
 
             if (player == MaxPlayer)
@@ -366,13 +371,19 @@ namespace Ultimate_tic_tac_toe
                 while (this.TreeDepth < this.MaxTreeDepth)
                 {
                     Node child = new Node(this.MakeMove(player, node.BoardNumberToPlayOn));
-                    alpha = Math.Max(alpha, AB(child, depth--, alpha, beta, !player));
+                    alpha = Math.Max(alpha, AB(child, --depth, alpha, beta, !player));
 
-                    if (beta <= alpha)
+                    if (alpha >= beta)
                     {
-                        break;
+                        node.Value = beta;
+                        this.UndoMove(node);
+                        return beta;
                     }
                 }
+
+                node.Value = alpha;
+                if (node.Depth == 1)
+                    this.nodes.Add(node);
 
                 // Stack is unwinding, undo last move
                 this.UndoMove(node);
@@ -383,13 +394,19 @@ namespace Ultimate_tic_tac_toe
                 while (this.TreeDepth < this.MaxTreeDepth)
                 {
                     Node child = new Node(this.MakeMove(player, node.BoardNumberToPlayOn));
-                    beta = Math.Min(beta, AB(child, depth--, alpha, beta, !player));
+                    beta = Math.Min(beta, AB(child, --depth, alpha, beta, !player));
 
-                    if (beta <= alpha)
+                    if (alpha >= beta)
                     {
+                        node.Value = alpha;
+                        this.UndoMove(node);
                         break;
                     }
                 }
+
+                node.Value = beta;
+                if (node.Depth == 1)
+                    this.nodes.Add(node);
 
                 // Stack is unwinding, undo last move
                 this.UndoMove(node);

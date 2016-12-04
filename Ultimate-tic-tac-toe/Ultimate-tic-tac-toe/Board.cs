@@ -21,6 +21,10 @@ namespace Ultimate_tic_tac_toe
 
         public Board(Board b)
         {
+            this.MiniGames = new List<char[,]>();
+            this.Main = new char[3, 3];
+            this.InitBoards();
+
             for (short x = 0; x < 9; x++)
                 for (short y = 0; y < 3; y++)
                     for (short z = 0; z < 3; z++)
@@ -28,7 +32,7 @@ namespace Ultimate_tic_tac_toe
                         this.MiniGames[x][y, z] = b.MiniGames[x][y, z];
                         if (x == 8)
                         {
-                            this.Main[x, y] = b.Main[x, y];
+                            this.Main[y, z] = b.Main[y, z];
                         }
                     }
         }
@@ -102,16 +106,16 @@ namespace Ultimate_tic_tac_toe
                     xPlayer++;
                 else if (board[row, col] == 'O')
                     oPlayer++;
-
-                if (xPlayer == 3)
-                    return 'X';
-                else if (oPlayer == 3)
-                    return 'O';
-                else if (row < 2)
-                    return CheckRowWin(board, ++row);
             }
 
-            return 'N';
+            if (xPlayer == 3)
+                return 'X';
+            else if (oPlayer == 3)
+                return 'O';
+            else if (row < 2)
+                return CheckRowWin(board, ++row);
+            else
+                return 'N';
         }
 
         private char CheckColWin(char[,] board, short col)
@@ -125,16 +129,16 @@ namespace Ultimate_tic_tac_toe
                     xPlayer++;
                 else if (board[row, col] == 'O')
                     oPlayer++;
-
-                if (xPlayer == 3)
-                    return 'X';
-                else if (oPlayer == 3)
-                    return 'O';
-                else if (col < 2)
-                    return CheckRowWin(board, ++col);
             }
 
-            return 'N';
+            if (xPlayer == 3)
+                return 'X';
+            else if (oPlayer == 3)
+                return 'O';
+            else if (col < 2)
+                return CheckColWin(board, ++col);
+            else
+                return 'N';
         }
 
         private Tuple<bool, char> CheckTie(char[,] board)
@@ -171,7 +175,7 @@ namespace Ultimate_tic_tac_toe
 
         }
 
-        public Tuple<short,short> GetOpenMove(char[,] board)
+        public Tuple<short, short> GetOpenMove(char[,] board)
         {
             for (short i = 0; i < 3; i++)
                 for (short j = 0; j < 3; j++)
@@ -190,7 +194,7 @@ namespace Ultimate_tic_tac_toe
         /// <returns></returns>
         public Tuple<short, short> BoardCoord(short boardNum)
         {
-            switch(boardNum)
+            switch (boardNum)
             {
                 case 0: return new Tuple<short, short>(0, 0);
                 case 1: return new Tuple<short, short>(0, 1);
