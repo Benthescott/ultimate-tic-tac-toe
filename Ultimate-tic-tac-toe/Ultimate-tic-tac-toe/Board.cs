@@ -171,12 +171,24 @@ namespace Ultimate_tic_tac_toe
 
         }
 
+        public Tuple<short,short> GetOpenMove(char[,] board)
+        {
+            for (short i = 0; i < 3; i++)
+                for (short j = 0; j < 3; j++)
+                {
+                    if (board[i, j] == 'B')
+                        return new Tuple<short, short>(i, j);
+                }
+
+            return null;
+        }
+
         /// <summary>
         /// Returns the x,y coordinate of a board
         /// </summary>
         /// <param name="boardNum">Board number (0-8)</param>
         /// <returns></returns>
-        public Tuple<short, short> BoardCoord(int boardNum)
+        public Tuple<short, short> BoardCoord(short boardNum)
         {
             switch(boardNum)
             {
@@ -190,6 +202,28 @@ namespace Ultimate_tic_tac_toe
                 case 7: return new Tuple<short, short>(2, 1);
                 default: return new Tuple<short, short>(2, 2);
             }
+        }
+
+        public short MainBoardCoord(short row, short col)
+        {
+            if (row == 0 && col == 0)
+                return 0;
+            else if (row == 0 && col == 1)
+                return 1;
+            else if (row == 0 && col == 2)
+                return 2;
+            else if (row == 1 && col == 0)
+                return 3;
+            else if (row == 1 && col == 1)
+                return 4;
+            else if (row == 1 && col == 2)
+                return 5;
+            else if (row == 2 && col == 0)
+                return 6;
+            else if (row == 2 && col == 1)
+                return 7;
+            else
+                return 8;
         }
     }
 }

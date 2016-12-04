@@ -24,7 +24,7 @@ namespace Ultimate_tic_tac_toe
             this.BoardState = new Board(b);
             this.MaxTreeDepth = depth;
 
-            int result = this.AB(new Node(this.TreeDepth, boardNum, this.MaxPlayer), depth, int.MinValue, int.MaxValue, MaxPlayer);
+            int result = this.AB(new Node(this.TreeDepth, boardNum, this.MaxPlayer), depth, short.MinValue, short.MaxValue, MaxPlayer);
 
             return this.BoardState;
         }
@@ -33,25 +33,72 @@ namespace Ultimate_tic_tac_toe
         {
             // Make new node
             Node node = new Node();
-
+            
+            // If 'O' player
             if (player == this.MaxPlayer)
             {
-                // Make any 'B' space on boardNum 'O'
-                // Increment this.TreeDepth
-                // set row/col in node equal to move made
-                // set node.Depth = this.depth
-                // If move made caused Main Board to change, set node.MainChanged to true
-                // set node.BoardNumberPlayedOn = to boardNum
-                // set node.BoardNumberToPlayOn = board opponent must play on next
-                // set node.Player = player
+                // If the board to play on is not complete (win / tie)
+                if (this.BoardState.Main[this.BoardState.BoardCoord(boardNum).Item1, this.BoardState.BoardCoord(boardNum).Item2] == 'B')
+                {
+                    // Make any 'B' space on boardNum 'O'
+                    // Get the first availabe move on the minigame
+                    Tuple<short, short> move = this.BoardState.GetOpenMove(this.BoardState.MiniGames[boardNum]);
+                    this.BoardState.MiniGames[boardNum][move.Item1, move.Item2] = 'O';
+                    // If move made caused Main Board to change, set node.MainChanged to true
+                    if (this.BoardState.BoardComplete(this.BoardState.MiniGames[boardNum]).Item1)
+                    {
+                        if (this.BoardState.BoardComplete(this.BoardState.MiniGames[boardNum]).Item2 == 'T')
+                            this.BoardState.Main[this.BoardState.BoardCoord(boardNum).Item1, this.BoardState.BoardCoord(boardNum).Item2] = 'T';
+                        else
+                            this.BoardState.Main[this.BoardState.BoardCoord(boardNum).Item1, this.BoardState.BoardCoord(boardNum).Item2] = 'O';
+                        node.MainChanged = true;
+                    }
+                    // Increment this.TreeDepth
+                    this.TreeDepth++;
+
+                    // set row/col in node equal to move made
+                    node.Row = move.Item1;
+                    node.Col = move.Item2;
+
+                    // set node.Depth = this.depth
+                    node.Depth = this.TreeDepth;
+
+                    // set node.BoardNumberPlayedOn = to boardNum
+                    node.BoardNumberPlayedOn = boardNum;
+
+                    // set node.BoardNumberToPlayOn = board opponent must play on next
+                    node.BoardNumberToPlayOn = this.BoardState.MainBoardCoord(move.Item1, move.Item2);
+
+                    // set node.Player = player
+                    node.Player = player;
+                }
+                // 'O' player sent to completed board, can now move anywhere that's open
+                else
+                {
+                    // Get open move on Main
+                    Tuple<short, short> mainBoardMove = this.BoardState.GetOpenMove(this.BoardState.Main);
+
+                    // Get Main board number
+                    short boardSelected = this.BoardState.MainBoardCoord(mainBoardMove.Item1, mainBoardMove.Item2);
+
+                    // Get miniboard move, set it to 'O'
+                    Tuple<short, short> miniBoardMove = this.BoardState.GetOpenMove(this.BoardState.MiniGames[boardSelected]);
+                    this.BoardState.MiniGames[boardSelected][miniBoardMove.Item1, miniBoardMove.Item2] = 'O';
+
+                    // If move made caused Main Board to change, set node.MainChanged to true
+
+
+                }
             }
+            // 'X' player
             else
             {
                 // Make any 'B' space on boardNum 'X'
+                // If move made caused Main Board to change, set node.MainChanged to true
+
                 // Increment this.TreeDepth
                 // set row/col in node equal to move made
                 // set node.Depth = this.depth
-                // If move made caused Main Board to change, set node.MainChanged to true
                 // set node.BoardNumberPlayedOn = to boardNum
                 // set node.BoardNumberToPlayOn = board opponent must play on next
                 // set node.Player = player
@@ -87,8 +134,6 @@ namespace Ultimate_tic_tac_toe
         {
             if (depth == 0 || IsTerminal(player, node))
             {
-                // Stack is unwinding, undo last move
-                this.UndoMove(node);
                 return evaluate(player);
             }
 
