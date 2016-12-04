@@ -29,11 +29,20 @@ namespace Ultimate_tic_tac_toe
             return this.BoardState;
         }
 
+
+        /// <summary>
+        ///     This function makes one valid move.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="boardNum"></param>
+        /// <returns>
+        ///     Returns a new node for the tree.
+        /// </returns>
         private Node MakeMove(bool player, short boardNum)
         {
             // Make new node
             Node node = new Node();
-            
+
             // If 'O' player
             if (player == this.MaxPlayer)
             {
@@ -216,18 +225,131 @@ namespace Ultimate_tic_tac_toe
                 return false;
         }
 
-        private short evaluate(bool player, Node node)
+
+        /// <summary>
+        ///     Lowest level evaluation, assign value to one sequence of 3 spaces
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        private short EvaluateLine(bool player, char[] line)
         {
             short result = 0;
+            short xPlayer = 0;
+            short oPlayer = 0;
+            short blanks = 0;
 
-            // O's turn
             if (player == this.MaxPlayer)
             {
+                for (short i = 0; i < 3; i++)
+                {
+                    if (line[i] == 'O')
+                        oPlayer++;
+                    else if (line[i] == 'B')
+                        blanks++;
+                }
 
+                if (oPlayer + blanks == 3)
+                {
+                    if (oPlayer == 1)
+                        result++;
+                    else if (oPlayer == 2)
+                        result += 10;
+                }
             }
             else
             {
+                for (short i = 0; i < 3; i++)
+                {
+                    if (line[i] == 'X')
+                        xPlayer++;
+                    else if (line[i] == 'B')
+                        blanks++;
+                }
 
+                if (xPlayer + blanks == 3)
+                {
+                    if (xPlayer == 1)
+                        result++;
+                    else if (xPlayer == 2)
+                        result += 10;
+                }
+            }
+
+            return result;
+        }
+
+
+        /// <summary>
+        ///     This is the low level static evaluation function
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="player"></param>
+        /// <param name="isMain"></param>
+        /// <returns></returns>
+        private short EvaluateBoard(char[,] board, bool player, short multiplier)
+        {
+            short result = 0;
+            // Evaluating Main board
+
+            Tuple<bool, char> res = this.BoardState.BoardComplete(board);
+            // If the game is complete
+            if (res.Item1)
+            {
+                if (res.Item2 == 'T')
+                    result = 0;
+                else if (player == this.MaxPlayer && res.Item2 == 'O')
+                    result += (short)(multiplier * 100);
+                else if (!player == this.MaxPlayer && res.Item2 == 'X')
+                    result += (short)(multiplier * 100);
+                else
+                    result -= (short)(multiplier * 100);
+            }
+            // If the game is still in progress
+            else
+            {
+                // Evaluate rows
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 0], board[0, 1], board[0, 2] }));
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[1, 0], board[1, 1], board[1, 2] }));
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[2, 0], board[2, 1], board[2, 2] }));
+
+                // Evaluate columns
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 0], board[1, 0], board[2, 0] }));
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 1], board[1, 1], board[2, 1] }));
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 2], board[1, 2], board[2, 2] }));
+
+                // Evaluate diagonals
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 0], board[1, 1], board[2, 2] }));
+                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 2], board[1, 1], board[2, 0] }));
+            }
+
+
+            return result;
+        }
+
+
+        /// <summary>
+        ///     This is the high level static evaluation function.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        private short Evaluate(bool player)
+        {
+            short result = 0;
+
+            for (short index = 0; index < 10; index++)
+            {
+                if (index < 9)
+                {
+                    result += EvaluateBoard(this.BoardState.MiniGames[index], player, 1);
+                    result -= EvaluateBoard(this.BoardState.MiniGames[index], !player, 1);
+                }
+                else
+                {
+                    result += EvaluateBoard(this.BoardState.Main, player, 10);
+                    result -= EvaluateBoard(this.BoardState.Main, !player, 10);
+                }
             }
 
             return result;
@@ -237,7 +359,7 @@ namespace Ultimate_tic_tac_toe
         {
             if (depth == 0 || IsTerminal(player, node))
             {
-                return evaluate(player, node);
+                return Evaluate(player);
             }
 
             if (player == MaxPlayer)
@@ -274,7 +396,7 @@ namespace Ultimate_tic_tac_toe
                 this.UndoMove(node);
                 return beta;
             }
-            
+
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Ultimate_tic_tac_toe
         public short Depth { get; set; }
 
         // If main board was changed
-        public bool MainChanged = false;
+        public bool MainChanged { get; set; }
 
         // The board, 0-8, played on
         public short BoardNumberPlayedOn { get; set; }
@@ -29,6 +29,7 @@ namespace Ultimate_tic_tac_toe
 
         public Node()
         {
+            this.MainChanged = false;
         }
 
         public Node(Node n)
@@ -47,6 +48,7 @@ namespace Ultimate_tic_tac_toe
             this.Depth = depth;
             this.BoardNumberToPlayOn = BNTPO;
             this.Player = player;
+            this.MainChanged = false;
         }
 
     }
