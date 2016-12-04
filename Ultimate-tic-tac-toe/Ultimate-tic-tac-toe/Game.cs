@@ -45,19 +45,15 @@ namespace Ultimate_tic_tac_toe
                 else
                     isMoveUnlimited = true;
 
+                updateBoard();
+
                 if (xTurn)
                 {
-                    updateBoard();
-                    // Do stuff with model (update game board) and anything else necessary to
-                    //   process the turn before returning to controller.
                     xTurn = false;
                     return 'X';
                 }
                 else
                 {
-                    updateBoard();
-                    // Do stuff with model (update game board) and anything else necessary to
-                    //   process the turn before returning to controller.
                     xTurn = true;
                     return 'O';
                 }
@@ -88,13 +84,14 @@ namespace Ultimate_tic_tac_toe
         private void updateBoard()
         {
             if (xTurn)
-                board.gameBoard[aMove.row, aMove.col] = 'X';
+                board.MiniGames[board.MainBoardCoord(aMove.row, aMove.col)][] = 'X';
             else
-                board.gameBoard[aMove.row, aMove.col] = 'O';
+                board.MiniGames[board.MainBoardCoord(aMove.row, aMove.col)][] = 'O';
 
-            if (isMiniGameWon())
+            if (board.BoardComplete(board.MiniGames[board.MainBoardCoord()]).Item1)
             {
                 if (xTurn)
+                    board.Main[]
                     board.boardStatus[miniGameRowNum, miniGameColNum] = 'X';
                 else
                     board.boardStatus[miniGameRowNum, miniGameColNum] = 'O';
@@ -107,66 +104,9 @@ namespace Ultimate_tic_tac_toe
         /// Determines if big game is over (either a win or tie).
         /// </summary>
         /// <returns>A char representing either a win (X or O), a TIE (T), or continue (B)</returns>
-        public char isGameOver()
+        public Tuple<bool, char> isGameOver()
         {
-            // First mini game status to check is located at 1,1 in boardStatus array
-            //      The boards are at 1,1; 1,4; 1,7; 4,1; 4,4; 4,7; etc
-            int col = 1;
-            int row = 1;
-
-            // Check for a vertical win
-            for (; col <= 7; col += 3)
-            {
-                if (board.boardStatus[row, col] == 'X' && board.boardStatus[row + 3, col] == 'X' 
-                    && board.boardStatus[row + 6, col] == 'X')
-                    return 'X';
-                else if (board.boardStatus[row, col] == 'O' && board.boardStatus[row + 3, col] == 'O' 
-                    && board.boardStatus[row + 6, col] == 'O')
-                    return 'O';
-            }
-
-            // Reset number
-            col = 1;
-
-            // Check for a horizontal win
-            for (row -= 3; row >= 1; row -= 3)
-            {
-                if (board.boardStatus[row, col] == 'X' && board.boardStatus[row, col + 3] == 'X' 
-                    && board.boardStatus[row, col + 6] == 'X')
-                    return 'X';
-                else if (board.boardStatus[row, col] == 'O' && board.boardStatus[row, col + 3] == 'O' 
-                    && board.boardStatus[row, col + 6] == 'O')
-                    return 'O';
-            }
-
-            // Reset number
-            row = 1;
-
-            // Check for a diagonal win
-            if (board.boardStatus[row, col] == 'X' && board.boardStatus[row + 3, col + 3] == 'X' 
-                && board.boardStatus[row + 6, col + 6] == 'X')
-                return 'X';
-            else if (board.boardStatus[row, col] == 'O' && board.boardStatus[row + 3, col + 3] == 'O'
-                && board.boardStatus[row + 6, col + 6] == 'O')
-                return 'O';
-            else
-            {
-                if (board.boardStatus[row, col + 6] == 'X' && board.boardStatus[row + 3, col + 3] == 'X' 
-                    && board.boardStatus[row + 6, col] == 'X')
-                    return 'X';
-                else if (board.boardStatus[row, col + 6] == 'O' && board.boardStatus[row + 3, col + 3] == 'O' 
-                    && board.boardStatus[row + 6, col] == 'O')
-                    return 'O';
-            }
-
-            // Check TIE condition
-            for (; col <= 7; col += 3)
-                if (!(board.boardStatus[row, col] == 'B' || board.boardStatus[row + 3, col] == 'B' 
-                    || board.boardStatus[row + 6, col] == 'B'))
-                    return 'T';
-
-            // End case: game is not over
-            return 'B';
+            return board.BoardComplete(board.Main);
         }
 
         /// <summary>
@@ -212,63 +152,7 @@ namespace Ultimate_tic_tac_toe
 
         public bool isMiniGameWon()
         {
-            if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'B')
-            {
-                int gameRow = miniGameRowNum;
-                int gameCol = miniGameColNum;
-
-                gameRow--;
-
-                // Check for a horizontal win
-                for (int i = 0; i < 3; i++)
-                {
-                    if (board.gameBoard[gameRow, gameCol - 1] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
-                        && board.gameBoard[gameRow, gameCol + 1] == 'X')
-                        return true;                                            // X won horizontally
-                    else if (board.gameBoard[gameRow, gameCol - 1] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
-                        && board.gameBoard[gameRow, gameCol + 1] == 'O')
-                        return true;                                            // O won horizontally
-
-                    gameRow++;
-                }
-
-                // Reset numbers
-                gameRow = miniGameRowNum;
-                gameCol--;
-
-                // Check for a vertical win
-                for (int i = 0; i < 3; i++)
-                {
-                    if (board.gameBoard[gameRow - 1, gameCol] == 'X' && board.gameBoard[gameRow, gameCol] == 'X'
-                        && board.gameBoard[gameRow + 1, gameCol] == 'X')
-                        return true;                                            // X won vertically
-                    else if (board.gameBoard[gameRow - 1, gameCol] == 'O' && board.gameBoard[gameRow, gameCol] == 'O'
-                        && board.gameBoard[gameRow + 1, gameCol] == 'O')
-                        return true;                                            // O won vertically
-
-                    gameCol++;
-                }
-
-                // Reset number
-                gameCol = miniGameColNum;
-
-                // Check for a diagonal win
-                if (board.gameBoard[gameRow, gameCol] == 'X' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'X'
-                    && board.gameBoard[gameRow - 1, gameCol + 1] == 'X') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'X'
-                        && board.gameBoard[gameRow + 1, gameCol + 1] == 'X')))
-                    return true;                                                // X won diagonally
-                else if (board.gameBoard[gameRow, gameCol] == 'O' && ((board.gameBoard[gameRow + 1, gameCol - 1] == 'O'
-                    && board.gameBoard[gameRow - 1, gameCol + 1] == 'O') || (board.gameBoard[gameRow - 1, gameCol - 1] == 'O'
-                        && board.gameBoard[gameRow + 1, gameCol + 1] == 'O')))
-                    return true;                                                // O won diagonally
-
-                // If reached, no win condition was detected
-                return false;
-            }
-            else if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'T')
-                return false;
-            else
-                return true;
+            if (board.BoardComplete(board.))
         }
 
         private void TranslateBtnName(string location)

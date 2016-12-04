@@ -8,7 +8,6 @@ namespace Ultimate_tic_tac_toe
 {
     class AlphaBeta
     {
-
         private Board BoardState;
         private bool MaxPlayer = true;
         private short TreeDepth;
