@@ -8,8 +8,8 @@ namespace Ultimate_tic_tac_toe
 {
     class Move
     {
-        public int row;
-        public int col;
+        public short row;
+        public short col;
 
         public Move() { }
 
@@ -18,7 +18,7 @@ namespace Ultimate_tic_tac_toe
         /// </summary>
         /// <param name="x">Row</param>
         /// <param name="y">Column</param>
-        public Move(int x, int y)
+        public Move(short x, short y)
         {
             row = x;
             col = y;
