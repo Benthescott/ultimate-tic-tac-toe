@@ -34,9 +34,9 @@ namespace Ultimate_tic_tac_toe
                 boardNumberToPlayOn = board.MainBoardCoord(moveRow, moveCol);
 
                 if (board.BoardComplete(board.MiniGames[boardNumberToPlayOn]).Item1)
-                    isMoveUnlimited = false;
-                else
                     isMoveUnlimited = true;
+                else
+                    isMoveUnlimited = false;
 
                 updateBoard();
 
@@ -58,18 +58,16 @@ namespace Ultimate_tic_tac_toe
         private bool IsValidMove()
         {
             // If mini game has been finished, do not allow move within mini game
-            if (board.boardStatus[miniGameRowNum, miniGameColNum] != 'B')
+            if (board.BoardComplete(board.MiniGames[boardNumberToPlayOn]).Item1)
                 return false;
 
             // If the player may move anywhere and move is available; then move is valid
-            if (isMoveUnlimited && board.gameBoard[aMove.row, aMove.col] == 'B')
-                return true;        // Valid move
-
-            // Check if desired move is located in the required mini game and if move is available
-            if (aMove.row == nextMiniGame.row - 1 || aMove.row == nextMiniGame.row + 1 || aMove.row == nextMiniGame.row)
-                if (aMove.col == nextMiniGame.col - 1 || aMove.col == nextMiniGame.col + 1 || aMove.col == nextMiniGame.col)
-                    if (board.gameBoard[aMove.row, aMove.col] == 'B')
-                        return true;    // Valid move
+            if (board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] == 'B')
+                if (isMoveUnlimited)
+                    return true;        // Valid move
+                // Check if desired move is located in the required mini game
+                else if (boardNumberPlayedOn == boardNumberToPlayOn)
+                    return true;        // Valid move
 
             return false;       // Not a valid move
         }
@@ -77,20 +75,17 @@ namespace Ultimate_tic_tac_toe
         private void updateBoard()
         {
             if (xTurn)
-                board.MiniGames[board.MainBoardCoord(aMove.row, aMove.col)][] = 'X';
+                board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] = 'X';
             else
-                board.MiniGames[board.MainBoardCoord(aMove.row, aMove.col)][] = 'O';
+                board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] = 'O';
 
-            if (board.BoardComplete(board.MiniGames[board.MainBoardCoord()]).Item1)
+            Tuple<bool, char> boardState = board.BoardComplete(board.MiniGames[boardNumberPlayedOn]);
+
+            if (boardState.Item1)
             {
-                if (xTurn)
-                    board.Main[]
-                    board.boardStatus[miniGameRowNum, miniGameColNum] = 'X';
-                else
-                    board.boardStatus[miniGameRowNum, miniGameColNum] = 'O';
-            }
-            else if (isMiniGameTied())
-                board.boardStatus[miniGameRowNum, miniGameColNum] = 'T';
+                Tuple<short, short> boardCoords = board.BoardCoord(boardNumberPlayedOn);
+                board.Main[boardCoords.Item1, boardCoords.Item2] = boardState.Item2;
+            }        
         }
 
         /// <summary>
