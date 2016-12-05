@@ -11,11 +11,10 @@ namespace Ultimate_tic_tac_toe
     {
         private Board board;
         private Move aMove;
-        private Move nextMiniGame;
-        private int miniGameRowNum;
-        private int miniGameColNum;
-        private bool xTurn;
+        private short boardNumberToPlayOn;
+        private short boardNumberPlayedOn;
         private bool isMoveUnlimited;
+        private bool xTurn;
 
         public Game()
         {
@@ -23,24 +22,18 @@ namespace Ultimate_tic_tac_toe
             isMoveUnlimited = true; // Player may choose any move at the beginning of the game
             board = new Board();
             aMove = new Move();
-            nextMiniGame = new Move(0,0);
         }
 
-        /// <summary>
-        /// A capitalized X/O/B is returned for the controller to know if the board needs to be updated.
-        /// on the button clicked on by the user.
-        /// </summary>
-        /// <param name="location">Entire button name</param>
-        /// <returns>Char</returns>
-        public char PlayerMadeMove(string location)
+        public char PlayerMadeMove(short boardNum, short moveRow, short moveCol)
         {
-            TranslateBtnName(location);
+            boardNumberPlayedOn = boardNum;
+            aMove = new Move(moveRow, moveCol);
 
             if (IsValidMove())
             {
-                StoreNextGameMove(location);
+                boardNumberToPlayOn = board.MainBoardCoord(moveRow, moveCol);
 
-                if (board.boardStatus[nextMiniGame.row, nextMiniGame.col] == 'B')
+                if (board.BoardComplete(board.MiniGames[boardNumberToPlayOn]).Item1)
                     isMoveUnlimited = false;
                 else
                     isMoveUnlimited = true;
@@ -153,130 +146,6 @@ namespace Ultimate_tic_tac_toe
         public bool isMiniGameWon()
         {
             if (board.BoardComplete(board.))
-        }
-
-        private void TranslateBtnName(string location)
-        {
-            String[] locationArray = location.Split('_');
-
-            //Parse out which mini game was played in
-            switch (locationArray[0])
-            {
-                case "top":
-                    {
-                        switch (locationArray[1])
-                        {
-                            case "L":
-                                miniGameRowNum = 1;
-                                miniGameColNum = 1; break;
-                            case "M":
-                                miniGameRowNum = 1;
-                                miniGameColNum = 4; break;
-                            case "R":
-                                miniGameRowNum = 1;
-                                miniGameColNum = 7; break;
-                        }
-                        break;
-                    }
-                case "mid":
-                    {
-                        switch (locationArray[1])
-                        {
-                            case "L":
-                                miniGameRowNum = 4;
-                                miniGameColNum = 1; break;
-                            case "M":
-                                miniGameRowNum = 4;
-                                miniGameColNum = 4; break;
-                            case "R":
-                                miniGameRowNum = 4;
-                                miniGameColNum = 7; break;
-                        }
-                        break;
-                    }
-                case "bot":
-                    {
-                        switch (locationArray[1])
-                        {
-                            case "L":
-                                miniGameRowNum = 7;
-                                miniGameColNum = 1; break;
-                            case "M":
-                                miniGameRowNum = 7;
-                                miniGameColNum = 4; break;
-                            case "R":
-                                miniGameRowNum = 7;
-                                miniGameColNum = 7; break;
-                        }
-                        break;
-                    }
-            }
-
-            aMove.row = miniGameRowNum;
-            aMove.col = miniGameColNum;
-
-            //Parse out which location in mini game was played
-            switch (locationArray[2])
-            {
-                case "top":
-                    {
-                        switch (locationArray[3])
-                        {
-                            case "L":
-                                aMove.row -= 1;
-                                aMove.col -= 1; break;
-                            case "M":
-                                aMove.row -= 1; break;
-                            case "R":
-                                aMove.row -= 1;
-                                aMove.col += 1; break;
-                        }
-                        break;
-                    }
-                case "mid":
-                    {
-                        switch (locationArray[3])
-                        {
-                            case "L":
-                                aMove.col -= 1; break;
-                            case "R":
-                                aMove.col += 1; break;
-                        }
-                        break;
-                    }
-                case "bot":
-                    {
-                        switch (locationArray[3])
-                        {
-                            case "L":
-                                aMove.row += 1;
-                                aMove.col -= 1; break;
-                            case "M":
-                                aMove.row += 1; break;
-                            case "R":
-                                aMove.row += 1;
-                                aMove.col += 1; break;
-                        }
-                        break;
-                    }
-            }
-        }
-
-        private void StoreNextGameMove(string currentMoveLoc)
-        {
-            if (currentMoveLoc.Contains("_top_"))
-                nextMiniGame.row = 1;
-            else if (currentMoveLoc.Contains("_mid_"))
-                nextMiniGame.row = 4;
-            else
-                nextMiniGame.row = 7;
-
-            if (currentMoveLoc.EndsWith("_L_btn"))
-                nextMiniGame.col = 1;
-            else if (currentMoveLoc.EndsWith("_M_btn"))
-                nextMiniGame.col = 4;
-            else
-                nextMiniGame.col = 7;
         }
     }
 }
