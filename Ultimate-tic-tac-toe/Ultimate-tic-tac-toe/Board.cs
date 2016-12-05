@@ -175,16 +175,17 @@ namespace Ultimate_tic_tac_toe
 
         }
 
-        public Tuple<short, short> GetOpenMove(char[,] board)
+        public List<Tuple<short, short, short>> GetOpenMoves(char[,] board, short boardNum)
         {
+            List<Tuple<short, short, short>> moves = new List<Tuple<short, short, short>>();
             for (short i = 0; i < 3; i++)
                 for (short j = 0; j < 3; j++)
                 {
                     if (board[i, j] == 'B')
-                        return new Tuple<short, short>(i, j);
+                        moves.Add(new Tuple<short, short, short>(i, j, boardNum));
                 }
 
-            return null;
+            return moves;
         }
 
         /// <summary>

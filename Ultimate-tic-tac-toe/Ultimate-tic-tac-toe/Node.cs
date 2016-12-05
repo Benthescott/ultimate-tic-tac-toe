@@ -33,6 +33,7 @@ namespace Ultimate_tic_tac_toe
         public Node()
         {
             this.MainChanged = false;
+            this.Depth = 0;
         }
 
         public Node(Node n)
