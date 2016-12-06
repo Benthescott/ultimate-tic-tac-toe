@@ -24,7 +24,16 @@ namespace Ultimate_tic_tac_toe
             aMove = new Move();
         }
 
-        public char PlayerMadeMove(short boardNum, short moveRow, short moveCol)
+        /// <summary>
+        /// Processes a move and returns a tuple of 3. Bool for valid move,
+        ///     char #1 for whose move or (mini or main) game state,
+        ///     char #2 for winner, tie, or just regular move
+        /// </summary>
+        /// <param name="boardNum"></param>
+        /// <param name="moveRow"></param>
+        /// <param name="moveCol"></param>
+        /// <returns></returns>
+        public Tuple<bool, char, char> MadeMove(short boardNum, short moveRow, short moveCol)
         {
             boardNumberPlayedOn = boardNum;
             aMove = new Move(moveRow, moveCol);
@@ -38,21 +47,39 @@ namespace Ultimate_tic_tac_toe
                 else
                     isMoveUnlimited = false;
 
-                updateBoard();
+                UpdateBoard();
 
-                if (xTurn)
+                Tuple<bool, char> moveResult = IsMiniGameOver(boardNum);
+
+                if (moveResult.Item1)
                 {
-                    xTurn = false;
-                    return 'X';
+                    // Mini Game is complete
+                    Tuple<short, short> boardCoords = board.BoardCoord(boardNumberPlayedOn);
+                    board.Main[boardCoords.Item1, boardCoords.Item2] = moveResult.Item2;
+
+                    Tuple<bool, char> gameState = IsGameOver();
+
+                    if (gameState.Item1)
+                        return new Tuple<bool, char, char>(true, 'G', gameState.Item2);     // Game over (item2 has winner/tie)
+                    else
+                    {
+                        TurnManager();
+                        return new Tuple<bool, char, char>(true, 'M', moveResult.Item2);    // Mini game is complete (item2 has winner/tie)
+                    }
+                }
+                else if (xTurn)
+                {
+                    TurnManager();
+                    return new Tuple<bool, char, char>(true, 'X', 'B');     // Valid move, no win/tie
                 }
                 else
                 {
-                    xTurn = true;
-                    return 'O';
+                    TurnManager();
+                    return new Tuple<bool, char, char>(true, 'O', 'B');     // Valid move, no win/tie
                 }
             }
             else
-                return 'B';     // Not a valid move
+                return new Tuple<bool, char, char>(false, 'B', 'B');         // Not a valid move
         }
 
         private bool IsValidMove()
@@ -65,14 +92,13 @@ namespace Ultimate_tic_tac_toe
             if (board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] == 'B')
                 if (isMoveUnlimited)
                     return true;        // Valid move
-                // Check if desired move is located in the required mini game
-                else if (boardNumberPlayedOn == boardNumberToPlayOn)
+                else if (boardNumberPlayedOn == boardNumberToPlayOn)    // Check if desired move is located in the required mini game
                     return true;        // Valid move
 
             return false;       // Not a valid move
         }
 
-        private void updateBoard()
+        private void UpdateBoard()
         {
             if (xTurn)
                 board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] = 'X';
@@ -88,59 +114,22 @@ namespace Ultimate_tic_tac_toe
             }        
         }
 
-        /// <summary>
-        /// Determines if big game is over (either a win or tie).
-        /// </summary>
-        /// <returns>A char representing either a win (X or O), a TIE (T), or continue (B)</returns>
-        public Tuple<bool, char> isGameOver()
+        public Tuple<bool, char> IsGameOver()
         {
             return board.BoardComplete(board.Main);
         }
 
-        /// <summary>
-        /// Model helper function (private function). Searches game for empty moves.
-        /// </summary>
-        /// <returns></returns>
-        private bool isMiniGameTied()
+        private Tuple<bool, char> IsMiniGameOver(short boardNum)
         {
-            /* No win has been detected up to this point when this function is called.
-                  Check if all moves in mini game have been used. If yes, then it is a TIE. */
-
-            for (int row = miniGameRowNum - 1; row <= miniGameRowNum + 1; row++)
-                for (int col = miniGameColNum - 1; col <= miniGameColNum + 1; col++)
-                    if (board.gameBoard[row, col] == 'B')
-                        return false;
-
-            return true;
+            return board.BoardComplete(board.MiniGames[boardNum]);
         }
 
-        /// <summary>
-        /// Only called by controller to determine if the current board is tied. Only checks boardStatus.
-        /// </summary>
-        /// <returns></returns>
-        public bool isBoardTied()
+        private void TurnManager()
         {
-            if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'T')
-                return true;
+            if (xTurn)
+                xTurn = false;
             else
-                return false;
-        } 
-
-        /// <summary>
-        /// If a win was detected, this function determines if X was the winner
-        /// </summary>
-        /// <returns></returns>
-        public bool xWon()
-        {
-            if (board.boardStatus[miniGameRowNum, miniGameColNum] == 'X')
-                return true;
-            else
-                return false;
-        }
-
-        public bool isMiniGameWon()
-        {
-            if (board.BoardComplete(board.))
+                xTurn = true;
         }
     }
 }

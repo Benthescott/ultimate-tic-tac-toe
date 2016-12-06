@@ -84,7 +84,7 @@ namespace Ultimate_tic_tac_toe
 
             if (uiHasChanged)
             {
-                if (game.isMiniGameWon())
+                if (game.isMiniGameOver())
                 {
                     // Update UI
                     string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
@@ -98,7 +98,7 @@ namespace Ultimate_tic_tac_toe
                     MiniGameTied(gridName);
                 }
 
-                char gameState = game.isGameOver();
+                char gameState = game.IsGameOver();
                 // Next, check for big game win and act accordingly
                 if (gameState != 'B')
                     GameOver(gameState);
