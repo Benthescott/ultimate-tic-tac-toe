@@ -16,18 +16,42 @@ namespace Ultimate_tic_tac_toe
 
         public AlphaBeta()
         {
+            this.BoardState = new Board();
         }
 
-        public Board MakeAIMove(Board b, short boardNum, short depth)
+        public Node MakeAIMove(Node n, short depth, bool player)
         {
+            this.MakeMove(!player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn));
+
+            //BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'X';
+
             this.TreeDepth = 0;
-            this.BoardState = new Board(b);
             this.MaxTreeDepth = depth;
             nodes = new List<Node>();
 
-            short result = this.AB(new Node(this.TreeDepth, boardNum, this.MaxPlayer), short.MinValue, short.MaxValue, MaxPlayer);
+            short result = this.AB(new Node(this.TreeDepth, n.BoardNumberToPlayOn, this.MaxPlayer), short.MinValue, short.MaxValue, player);
 
-            return this.BoardState;
+            short max = short.MinValue;
+            Node selectedNode = new Node();
+            for (short i = 0; i < nodes.Count; i++)
+            {
+                if (max < nodes[i].Value)
+                {
+                    max = nodes[i].Value;
+                    selectedNode = new Node(nodes[i]);
+                }
+            }
+
+            Console.WriteLine("AI Move: " + selectedNode.BoardNumberPlayedOn + " " + selectedNode.Row + " " + selectedNode.Col);
+
+            Node v = new Node(this.MakeMove(player, new Tuple<short, short, short>(selectedNode.Row, selectedNode.Col, selectedNode.BoardNumberPlayedOn)));
+
+            return v;
+        }
+
+        public void UpdateBoard(bool player, Tuple<short, short, short> move)
+        {
+            MakeMove(player, move);
         }
 
 
@@ -163,6 +187,8 @@ namespace Ultimate_tic_tac_toe
                         result++;
                     else if (oPlayer == 2)
                         result += 10;
+                    else if (oPlayer == 3)
+                        result += 20;
                 }
             }
             else
@@ -181,6 +207,8 @@ namespace Ultimate_tic_tac_toe
                         result++;
                     else if (xPlayer == 2)
                         result += 10;
+                    else if (xPlayer == 3)
+                        result += 20;
                 }
             }
 
@@ -244,6 +272,30 @@ namespace Ultimate_tic_tac_toe
         /// <returns></returns>
         private short Evaluate(bool player)
         {
+            if (player == MaxPlayer)
+            {
+                Tuple<bool, char> res = BoardState.BoardComplete(BoardState.Main);
+                if (res.Item1)
+                    if (res.Item2 == 'T')
+                        return 0;
+                    else if (res.Item2 == 'O')
+                        return short.MaxValue;
+                    else
+                        return short.MinValue;
+            }
+            else
+            {
+                Tuple<bool, char> res = BoardState.BoardComplete(BoardState.Main);
+                if (res.Item1)
+                    if (res.Item2 == 'T')
+                        return 0;
+                    else if (res.Item2 == 'X')
+                        return short.MaxValue;
+                    else
+                        return short.MinValue;
+            }
+
+
             short result = 0;
 
             for (short index = 0; index < 10; index++)
@@ -276,11 +328,14 @@ namespace Ultimate_tic_tac_toe
             moveList = this.BoardState.GetOpenMoves(board, node.BoardNumberToPlayOn);
 
             // Board complete
-            if (moveList.Count == 0)
+            if (BoardState.BoardComplete(board).Item1)
             {
                 List<Tuple<short, short, short>> allMoves = new List<Tuple<short, short, short>>();
                 for (short index = 0; index < 9; index++)
                 {
+                    if (BoardState.BoardComplete(this.BoardState.MiniGames[index]).Item1)
+                        continue;
+
                     moveList = this.BoardState.GetOpenMoves(this.BoardState.MiniGames[index], index);
                     if (moveList.Count > 0)
                         allMoves.AddRange(moveList);
@@ -291,6 +346,7 @@ namespace Ultimate_tic_tac_toe
                     Node n = new Node(this.MakeMove(player, move));
                     n.Depth = Convert.ToInt16(node.Depth + 1);
                     this.UndoMove(n);
+                    n.Player = !player;
                     children.Add(n);
                 }
             }
@@ -301,6 +357,7 @@ namespace Ultimate_tic_tac_toe
                     Node n = new Node(this.MakeMove(player, move));
                     n.Depth = Convert.ToInt16(node.Depth + 1);
                     this.UndoMove(n);
+                    n.Player = !player;
                     children.Add(n);
                 }
             }
