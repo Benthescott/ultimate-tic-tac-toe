@@ -58,56 +58,66 @@ namespace Ultimate_tic_tac_toe
         private void Btn_Click(object sender, RoutedEventArgs e)
         {
             Button clickedBtn = sender as Button;
-            char imgVar = game.PlayerMadeMove(clickedBtn.Name);
-            bool uiHasChanged = false;
 
-            if (imgVar == 'X')
-            {
-                ImageBrush brush = new ImageBrush();
-                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/x.png"));
-                clickedBtn.Background = brush;
-                uiHasChanged = true;
-                turnText.Text = "O's turn";
-                locationText.Text = NextMiniGameLoc(clickedBtn.Name);
-            }
-            else if (imgVar == 'O')
-            {
-                ImageBrush brush = new ImageBrush();
-                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/o.png"));
-                clickedBtn.Background = brush;
-                uiHasChanged = true;
-                turnText.Text = "X's turn";
-                locationText.Text = NextMiniGameLoc(clickedBtn.Name);
-            }
+            short bNum = short.Parse(clickedBtn.Name[3].ToString());
+            short moveRow = short.Parse(clickedBtn.Name[4].ToString());
+            short moveCol = short.Parse(clickedBtn.Name[5].ToString());
+            Tuple<bool, char, char> UIinfo = game.MadeMove(bNum, moveRow, moveCol);
 
-            // If next game location is mini game that has been won or tied, change next location label appropriately
-
-            if (uiHasChanged)
+            if (UIinfo.Item1)
             {
-                if (game.isMiniGameOver())
+                // If UI needs to be updated (b/c it was a valid move)
+                switch (UIinfo.Item2)
                 {
-                    // Update UI
-                    string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
-                    
-                    MiniGameWon(gridName);
-                }
-                else if (game.isBoardTied())
-                {
-                    // Update UI
-                    string gridName = clickedBtn.Name.Substring(0, 6) + "mini";
-                    MiniGameTied(gridName);
+                    case 'X': PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); break;
+                    case 'O': PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); break;
+                    case 'M': MiniGameOver(UIinfo.Item3, bNum); break;
+                    default: GameOver(UIinfo.Item3); break;
                 }
 
-                char gameState = game.IsGameOver();
-                // Next, check for big game win and act accordingly
-                if (gameState != 'B')
-                    GameOver(gameState);
+                Test();
             }
+        }
+
+        private async void Test()
+        {
+            await System.Threading.Tasks.Task.Run(() => Testing());
+        }
+
+        private void Testing()
+        {
+            int x = 1;
+            for (int j = 0; j < 1000000; j++)
+            {
+                for (int i = 0; i < 10000000; i++)
+                    x = (x + 1) * (x + -2);
+            }
+        }
+
+        private void PlaceMove(char player, int boardN, int row, int col)
+        {
+            ImageBrush brush = new ImageBrush();
+            Uri imagePath = new Uri("ms-appx:///images/x.png");
+
+            if (player == 'O')
+                imagePath = new Uri("ms-appx:///images/o.png");
+
+            foreach (Grid miniBoard in mainGrid.Children)
+                if (miniBoard.Name == "MB" + boardN.ToString())
+                    foreach (Button button in miniBoard.Children)
+                        if (button.Name == "Btn" + boardN + row + col)
+                        {
+                            brush.ImageSource = new BitmapImage(imagePath);
+                            button.Background = brush;
+                            brush = new ImageBrush();
+                        }
+
         }
 
         private async void GameOver(char winner)
         {
-            ContentDialog gameOverDialog = new ContentDialog() {
+            ContentDialog gameOverDialog = new ContentDialog()
+            {
                 Title = "Game Over",
                 Content = "\n" + winner + " won the game!\n\nThe game will now reset.",
                 PrimaryButtonText = "Ok",
@@ -122,185 +132,34 @@ namespace Ultimate_tic_tac_toe
             await gameOverDialog.ShowAsync();
         }
 
-        /// <summary>
-        /// Changes MiniGame board to show X or O won
-        /// </summary>
-        /// <param name="targetGridName">Only the beginning of the grid name</param>
-        private void MiniGameWon(string targetGridName)
+        private void MiniGameOver(char player, int boardN)
         {
-            ImageBrush brush = new ImageBrush();
-
-            if (game.xWon())
+            if (player == 'T')
             {
-                foreach (Grid grid in mainGrid.Children)
-                    if (grid.Name.StartsWith(targetGridName))
-                        foreach (Button btn in grid.Children)
-                        {
-                            if (btn.Name.EndsWith("top_L_btn") || btn.Name.EndsWith("bot_R_btn"))
-                            {
-                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomRight.png"));
-                                btn.Background = brush;
-                                brush = new ImageBrush();
-                            }
-                            else if (btn.Name.EndsWith("mid_M_btn"))
-                            {
-                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xMiddle.png"));
-                                btn.Background = brush;
-                                brush = new ImageBrush();
-                            }
-                            else if (btn.Name.EndsWith("bot_L_btn") || btn.Name.EndsWith("top_R_btn"))
-                            {
-                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomLeft.png"));
-                                btn.Background = brush;
-                                brush = new ImageBrush();
-                            }
-                            else
-                            {
-                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
-                                btn.Background = brush;
-                                brush = new ImageBrush();
-                            }
-                        }
-            }
-            else
-            {
-                foreach (Grid grid in mainGrid.Children)
-                    if (grid.Name.StartsWith(targetGridName))
-                        foreach (Button btn in grid.Children)
-                        {
-                            if (btn.Name.Contains("_top_"))
-                            {
-                                if (btn.Name.EndsWith("_L_btn"))
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopLeft.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                                else if (btn.Name.EndsWith("_M_btn"))
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopMiddle.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                                else
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopRight.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                            }
-                            else if (btn.Name.Contains("_mid_"))
-                            {
-                                if (btn.Name.EndsWith("_L_btn"))
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oLeft.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                                else if (btn.Name.EndsWith("_R_btn"))
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oRight.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                                else
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                            }
-                            else if (btn.Name.Contains("_bot_"))
-                            {
-                                if (btn.Name.EndsWith("_L_btn"))
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomLeft.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                                else if (btn.Name.EndsWith("_M_btn"))
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomMiddle.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                                else
-                                {
-                                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomRight.png"));
-                                    btn.Background = brush;
-                                    brush = new ImageBrush();
-                                }
-                            }
-                            else
-                            {
-                                brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
-                                btn.Background = brush;
-                                brush = new ImageBrush();
-                            }
-                        }
-            }
-        }
-
-        /// <summary>
-        /// Displays "TIE" for a mini game.
-        /// </summary>
-        /// <param name="targetGridName">Only the beginning of the grid name</param>
-        private void MiniGameTied(string targetGridName)
-        {
-            //Brushes 1-3 are for the images that spell 1 letter of the word "TIE"
-            ImageBrush brush1 = new ImageBrush();
-            brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/t.png"));
-            ImageBrush brush2 = new ImageBrush();
-            brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/i.png"));
-            ImageBrush brush3 = new ImageBrush();
-            brush3.ImageSource = new BitmapImage(new Uri("ms-appx:///images/e.png"));
-            ImageBrush brush4 = new ImageBrush();
-            brush4.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
-
-            foreach (Grid grid in mainGrid.Children)
-            {
-                if (grid.Name == targetGridName)
-                {
-                    foreach (Button btn in grid.Children)
+                foreach (Grid miniBoard in mainGrid.Children)
+                    if (miniBoard.Name == "MB" + boardN.ToString())
                     {
-                        if (btn.Name.Contains("mid_L_btn"))
-                            btn.Background = brush1;
-                        else if (btn.Name.Contains("mid_M_btn"))
-                            btn.Background = brush2;
-                        else if (btn.Name.Contains("mid_R_btn"))
-                            btn.Background = brush3;
-                        else
-                            btn.Background = brush4;
+                        PlaceTieMini(miniBoard);
                     }
-                }
             }
-        }
-
-        /// <summary>
-        /// This function returns the name of the minigame that must be played in next.
-        /// </summary>
-        /// <param name="btnName">Full button name</param>
-        /// <returns></returns>
-        private string NextMiniGameLoc(string btnName)
-        {
-            string targetGameName = "Next move in ";
-
-            if (btnName.Contains("_top_"))
-                targetGameName += "Top ";
-            else if (btnName.Contains("_mid_"))
-                targetGameName += "Middle ";
+            else if (player == 'X')
+            {
+                foreach (Grid miniBoard in mainGrid.Children)
+                    if (miniBoard.Name == "MB" + boardN.ToString())
+                    {
+                        PlaceXMiniWin(miniBoard);
+                        break;
+                    }
+            }
             else
-                targetGameName += "Bottom ";
-
-            if (btnName.EndsWith("_L_btn"))
-                targetGameName += "Left";
-            else if (btnName.EndsWith("_M_btn"))
-                targetGameName += "Middle";
-            else
-                targetGameName += "Right";
-
-            targetGameName += " mini game";
-            return targetGameName;
+            {
+                foreach (Grid miniBoard in mainGrid.Children)
+                    if (miniBoard.Name == "MB" + boardN.ToString())
+                    {
+                        PlaceOMiniWin(miniBoard);
+                        break;
+                    }
+            }
         }
 
         private void NewGame_clicked(object sender, RoutedEventArgs e)
@@ -316,19 +175,25 @@ namespace Ultimate_tic_tac_toe
         private async void About_clicked(object sender, RoutedEventArgs e)
         {
             StackPanel stack = new StackPanel();
-            TextBlock developerBox = new TextBlock() { Text = "Authors: Ethan Carrell, Ben Cline", Margin = new Thickness(0,20,0,10) };
+            TextBlock developerBox = new TextBlock() { Text = "Authors: Ethan Carrell, Ben Cline", Margin = new Thickness(0, 20, 0, 10) };
             stack.Children.Add(developerBox);
-            TextBlock text = new TextBlock() {
+            TextBlock text = new TextBlock()
+            {
                 Text = "Extra:\nStuff about devs and other stuff... Open (or copy the link below into your browser) to view more information about the game",
                 TextWrapping = TextWrapping.WrapWholeWords,
-                Margin = new Thickness(0,15,0,0)
+                Margin = new Thickness(0, 15, 0, 0)
             };
             stack.Children.Add(text);
-            HyperlinkButton hyperLink = new HyperlinkButton() { Content = "http://bejofo.net/ttt", NavigateUri = new System.Uri("http://bejofo.net/ttt"),
-                HorizontalAlignment = HorizontalAlignment.Center };
+            HyperlinkButton hyperLink = new HyperlinkButton()
+            {
+                Content = "http://bejofo.net/ttt",
+                NavigateUri = new System.Uri("http://bejofo.net/ttt"),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
             stack.Children.Add(hyperLink);
 
-            ContentDialog aboutDialog = new ContentDialog() {
+            ContentDialog aboutDialog = new ContentDialog()
+            {
                 Title = "About",
                 Content = stack,
                 PrimaryButtonText = "Ok",
@@ -340,6 +205,142 @@ namespace Ultimate_tic_tac_toe
         private void GameOverDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             RestartGame();
+        }
+
+        private void PlaceXMiniWin(Grid miniBoard)
+        {
+            ImageBrush brush = new ImageBrush();
+
+            foreach (Button button in miniBoard.Children)
+            {
+                if (button.Name.Contains("_top_"))
+                {
+                    if (button.Name.EndsWith("_L_btn"))
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopLeft.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                    else if (button.Name.EndsWith("_M_btn"))
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopMiddle.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                    else
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oTopRight.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                }
+                else if (button.Name.Contains("_mid_"))
+                {
+                    if (button.Name.EndsWith("_L_btn"))
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oLeft.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                    else if (button.Name.EndsWith("_R_btn"))
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oRight.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                    else
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                }
+                else if (button.Name.Contains("_bot_"))
+                {
+                    if (button.Name.EndsWith("_L_btn"))
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomLeft.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                    else if (button.Name.EndsWith("_M_btn"))
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomMiddle.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                    else
+                    {
+                        brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/oBottomRight.png"));
+                        button.Background = brush;
+                        brush = new ImageBrush();
+                    }
+                }
+                else
+                {
+                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+                    button.Background = brush;
+                    brush = new ImageBrush();
+                }
+            }
+        }
+
+        private void PlaceOMiniWin(Grid miniBoard)
+        {
+            ImageBrush brush = new ImageBrush();
+
+            foreach (Button button in miniBoard.Children)
+            {
+                if (button.Name.EndsWith("top_L_btn") || button.Name.EndsWith("bot_R_btn"))
+                {
+                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomRight.png"));
+                    button.Background = brush;
+                    brush = new ImageBrush();
+                }
+                else if (button.Name.EndsWith("mid_M_btn"))
+                {
+                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xMiddle.png"));
+                    button.Background = brush;
+                    brush = new ImageBrush();
+                }
+                else if (button.Name.EndsWith("bot_L_btn") || button.Name.EndsWith("top_R_btn"))
+                {
+                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/xBottomLeft.png"));
+                    button.Background = brush;
+                    brush = new ImageBrush();
+                }
+                else
+                {
+                    brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+                    button.Background = brush;
+                    brush = new ImageBrush();
+                }
+            }
+        }
+
+        private void PlaceTieMini(Grid miniBoard)
+        {
+            //Brushes 0-3 are for the images that spell 1 letter of the word "TIE"
+            ImageBrush brush = new ImageBrush();
+            brush.ImageSource = new BitmapImage(new Uri("ms-appx:///images/t.png"));
+            ImageBrush brush1 = new ImageBrush();
+            brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/i.png"));
+            ImageBrush brush2 = new ImageBrush();
+            brush2.ImageSource = new BitmapImage(new Uri("ms-appx:///images/e.png"));
+            ImageBrush brush3 = new ImageBrush();
+            brush3.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
+
+            foreach (Button button in miniBoard.Children)
+            {
+                if (button.Name.Contains("mid_L_btn"))
+                    button.Background = brush;
+                else if (button.Name.Contains("mid_M_btn"))
+                    button.Background = brush1;
+                else if (button.Name.Contains("mid_R_btn"))
+                    button.Background = brush2;
+                else
+                    button.Background = brush3;
+            }
         }
     }
 }
