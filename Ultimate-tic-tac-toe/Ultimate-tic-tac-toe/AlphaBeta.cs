@@ -19,6 +19,37 @@ namespace Ultimate_tic_tac_toe
             this.BoardState = new Board();
         }
 
+        /// <summary>
+        /// 
+        ///     (From Game.cs)
+        ///     Call: node = new Node(AI.MakeAIMove(node, 8, true));
+        /// 
+        /// </summary>
+        /// <param name="n">
+        ///     Node instance should contain:
+        ///     {
+        ///         this.BoardNumberPlayedOn = boardNum (The board the player used)
+        ///         this.BoardNumberToPlayOn = (The board TO play on)
+        ///         this.Row = (Row the player used)
+        ///         this.Col = (Col the player used)
+        ///     }
+        /// </param>
+        /// <param name="depth">
+        /// 
+        ///     Depth of each AI search: Just pass 4 or 8; 8 will take longer.    
+        /// 
+        /// </param>
+        /// <param name="player">
+        /// 
+        ///     Always pass true
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     Returns a Node instance containing all info needed to update the GUI
+        ///     with the AI's move
+        /// 
+        /// </returns>
         public Node MakeAIMove(Node n, short depth, bool player)
         {
             this.MakeMove(!player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn));
