@@ -12,12 +12,12 @@ namespace Ultimate_tic_tac_toe
         private Board BoardState;
         private bool MaxPlayer = true;
         private short MaxTreeDepth;
-        private List<Node> nodes;
+        private List<Node> RootChildren;
         private Node root;
 
         public AlphaBeta()
         {
-            this.BoardState = new Board();
+            BoardState = new Board();
         }
 
         /// <summary>
@@ -29,10 +29,10 @@ namespace Ultimate_tic_tac_toe
         /// <param name="n">
         ///     Node instance should contain:
         ///     {
-        ///         this.BoardNumberPlayedOn = boardNum (The board the player used)
-        ///         this.BoardNumberToPlayOn = (The board TO play on)
-        ///         this.Row = (Row the player used)
-        ///         this.Col = (Col the player used)
+        ///         BoardNumberPlayedOn = boardNum (The board the player used)
+        ///         BoardNumberToPlayOn = (The board TO play on)
+        ///         Row = (Row the player used)
+        ///         Col = (Col the player used)
         ///     }
         /// </param>
         /// <param name="depth">
@@ -53,34 +53,48 @@ namespace Ultimate_tic_tac_toe
         /// </returns>
         public Node MakeAIMove(Node n, short depth, bool player)
         {
-            root = new Node(MakeMove(!player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn)));
+            root = new Node(MakeMove(player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn)));
 
             //BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'X';
 
-            this.MaxTreeDepth = depth;
-            nodes = new List<Node>();
+            MaxTreeDepth = depth;
+            RootChildren = new List<Node>();
 
-            short result = this.AB(root, short.MinValue, short.MaxValue, player);
+            short result = AB(root, short.MinValue, short.MaxValue, player);
 
-            short max = short.MinValue;
-            Node selectedNode = new Node();
-            for (short i = 0; i < nodes.Count; i++)
-            {
-                if (max < nodes[i].Value)
-                {
-                    max = nodes[i].Value;
-                    selectedNode = new Node(nodes[i]);
-                }
-            }
+            Node selectedNode = new Node(BestMove());
 
             Debug.WriteLine("AI Move: " + selectedNode.BoardNumberPlayedOn + " " + selectedNode.Row + " " + selectedNode.Col);
 
-            Node v = new Node(this.MakeMove(player, new Tuple<short, short, short>(selectedNode.Row, selectedNode.Col, selectedNode.BoardNumberPlayedOn)));
+            Node v = new Node(MakeMove(player, new Tuple<short, short, short>(selectedNode.Row, selectedNode.Col, selectedNode.BoardNumberPlayedOn)));
 
             return v;
         }
 
-
+        private Node BestMove()
+        {
+            short max = short.MinValue;
+            Node selectedNode = new Node();
+            foreach (Node child in RootChildren)
+            {
+                MakeMove(true, new Tuple<short, short, short>(child.Row, child.Col, child.BoardNumberPlayedOn));
+                if (BoardState.BoardComplete(BoardState.Main).Item1 && BoardState.BoardComplete(BoardState.Main).Item2 == 'O')
+                {
+                    UndoMove(child);
+                    return child;
+                }
+                else
+                {
+                    UndoMove(child);
+                    if (max < child.Value)
+                    {
+                        max = child.Value;
+                        selectedNode = new Node(child);
+                    }
+                }
+            }
+            return selectedNode;
+        }
 
         /// <summary>
         ///     This function makes one valid move.
@@ -96,19 +110,19 @@ namespace Ultimate_tic_tac_toe
             Node node = new Node();
 
             // If 'O' player
-            if (player == this.MaxPlayer)
+            if (player == MaxPlayer)
             {
 
                 // Make any 'B' space on boardNum 'O'
-                this.BoardState.MiniGames[move.Item3][move.Item1, move.Item2] = 'O';
+                BoardState.MiniGames[move.Item3][move.Item1, move.Item2] = 'O';
 
                 // If move made caused Main Board to change, set node.MainChanged to true
-                if (this.BoardState.BoardComplete(this.BoardState.MiniGames[move.Item3]).Item1)
+                if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item1)
                 {
-                    if (this.BoardState.BoardComplete(this.BoardState.MiniGames[move.Item3]).Item2 == 'T')
-                        this.BoardState.Main[this.BoardState.BoardCoord(move.Item3).Item1, this.BoardState.BoardCoord(move.Item3).Item2] = 'T';
+                    if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item2 == 'T')
+                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'T';
                     else
-                        this.BoardState.Main[this.BoardState.BoardCoord(move.Item3).Item1, this.BoardState.BoardCoord(move.Item3).Item2] = 'O';
+                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'O';
                     node.MainChanged = true;
                 }
 
@@ -124,7 +138,7 @@ namespace Ultimate_tic_tac_toe
                 node.BoardNumberPlayedOn = move.Item3;
 
                 // set node.BoardNumberToPlayOn = board opponent must play on next
-                node.BoardNumberToPlayOn = this.BoardState.MainBoardCoord(move.Item1, move.Item2);
+                node.BoardNumberToPlayOn = BoardState.MainBoardCoord(move.Item1, move.Item2);
 
                 // set node.Player = player
                 node.Player = player;
@@ -135,15 +149,15 @@ namespace Ultimate_tic_tac_toe
             {
 
                 // Make 'B' space on boardNum 'X'
-                this.BoardState.MiniGames[move.Item3][move.Item1, move.Item2] = 'X';
+                BoardState.MiniGames[move.Item3][move.Item1, move.Item2] = 'X';
 
                 // If move made caused Main Board to change, set node.MainChanged to true
-                if (this.BoardState.BoardComplete(this.BoardState.MiniGames[move.Item3]).Item1)
+                if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item1)
                 {
-                    if (this.BoardState.BoardComplete(this.BoardState.MiniGames[move.Item3]).Item2 == 'T')
-                        this.BoardState.Main[this.BoardState.BoardCoord(move.Item3).Item1, this.BoardState.BoardCoord(move.Item3).Item2] = 'T';
+                    if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item2 == 'T')
+                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'T';
                     else
-                        this.BoardState.Main[this.BoardState.BoardCoord(move.Item3).Item1, this.BoardState.BoardCoord(move.Item3).Item2] = 'X';
+                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'X';
                     node.MainChanged = true;
                 }
 
@@ -158,7 +172,7 @@ namespace Ultimate_tic_tac_toe
                 node.BoardNumberPlayedOn = move.Item3;
 
                 // set node.BoardNumberToPlayOn = board opponent must play on next
-                node.BoardNumberToPlayOn = this.BoardState.MainBoardCoord(move.Item1, move.Item2);
+                node.BoardNumberToPlayOn = BoardState.MainBoardCoord(move.Item1, move.Item2);
 
                 // set node.Player = player
                 node.Player = player;
@@ -215,7 +229,7 @@ namespace Ultimate_tic_tac_toe
             short oPlayer = 0;
             short blanks = 0;
 
-            if (player == this.MaxPlayer)
+            if (player == MaxPlayer)
             {
                 for (short i = 0; i < 3; i++)
                 {
@@ -272,15 +286,15 @@ namespace Ultimate_tic_tac_toe
             short result = 0;
             // Evaluating Main board
 
-            Tuple<bool, char> res = this.BoardState.BoardComplete(board);
+            Tuple<bool, char> res = BoardState.BoardComplete(board);
             // If the game is complete
             if (res.Item1)
             {
                 if (res.Item2 == 'T')
                     result = 0;
-                else if (player == this.MaxPlayer && res.Item2 == 'O')
+                else if (player == MaxPlayer && res.Item2 == 'O')
                     result += (short)(multiplier * 100);
-                else if (player == this.MaxPlayer && res.Item2 == 'X')
+                else if (player == MaxPlayer && res.Item2 == 'X')
                     result += (short)(multiplier * 100);
                 else
                     result -= (short)(multiplier * 100);
@@ -289,18 +303,18 @@ namespace Ultimate_tic_tac_toe
             else
             {
                 // Evaluate rows
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 0], board[0, 1], board[0, 2] }));
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[1, 0], board[1, 1], board[1, 2] }));
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[2, 0], board[2, 1], board[2, 2] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[0, 0], board[0, 1], board[0, 2] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[1, 0], board[1, 1], board[1, 2] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[2, 0], board[2, 1], board[2, 2] }));
 
                 // Evaluate columns
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 0], board[1, 0], board[2, 0] }));
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 1], board[1, 1], board[2, 1] }));
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 2], board[1, 2], board[2, 2] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[0, 0], board[1, 0], board[2, 0] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[0, 1], board[1, 1], board[2, 1] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[0, 2], board[1, 2], board[2, 2] }));
 
                 // Evaluate diagonals
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 0], board[1, 1], board[2, 2] }));
-                result += (short)(multiplier * this.EvaluateLine(player, new char[] { board[0, 2], board[1, 1], board[2, 0] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[0, 0], board[1, 1], board[2, 2] }));
+                result += (short)(multiplier * EvaluateLine(player, new char[] { board[0, 2], board[1, 1], board[2, 0] }));
             }
 
 
@@ -346,13 +360,13 @@ namespace Ultimate_tic_tac_toe
             {
                 if (index < 9)
                 {
-                    result += EvaluateBoard(this.BoardState.MiniGames[index], player, 1);
-                    result -= EvaluateBoard(this.BoardState.MiniGames[index], !player, 1);
+                    result += EvaluateBoard(BoardState.MiniGames[index], player, 1);
+                    result -= EvaluateBoard(BoardState.MiniGames[index], !player, 1);
                 }
                 else
                 {
-                    result += EvaluateBoard(this.BoardState.Main, player, 10);
-                    result -= EvaluateBoard(this.BoardState.Main, !player, 10);
+                    result += EvaluateBoard(BoardState.Main, player, 10);
+                    result -= EvaluateBoard(BoardState.Main, !player, 10);
                 }
             }
 
@@ -365,11 +379,11 @@ namespace Ultimate_tic_tac_toe
             List<Node> children = new List<Node>();
 
             char[,] board = new char[3, 3];
-            board = this.BoardState.MiniGames[node.BoardNumberToPlayOn];
+            board = BoardState.MiniGames[node.BoardNumberToPlayOn];
 
             List<Tuple<short, short, short>> moveList = new List<Tuple<short, short, short>>();
 
-            moveList = this.BoardState.GetOpenMoves(board, node.BoardNumberToPlayOn);
+            moveList = BoardState.GetOpenMoves(board, node.BoardNumberToPlayOn);
 
             // Board complete
             if (BoardState.BoardComplete(board).Item1)
@@ -377,19 +391,19 @@ namespace Ultimate_tic_tac_toe
                 List<Tuple<short, short, short>> allMoves = new List<Tuple<short, short, short>>();
                 for (short index = 0; index < 9; index++)
                 {
-                    if (BoardState.BoardComplete(this.BoardState.MiniGames[index]).Item1)
+                    if (BoardState.BoardComplete(BoardState.MiniGames[index]).Item1)
                         continue;
 
-                    moveList = this.BoardState.GetOpenMoves(this.BoardState.MiniGames[index], index);
+                    moveList = BoardState.GetOpenMoves(BoardState.MiniGames[index], index);
                     if (moveList.Count > 0)
                         allMoves.AddRange(moveList);
 
                 }
                 foreach (Tuple<short, short, short> move in allMoves)
                 {
-                    Node n = new Node(this.MakeMove(player, move));
+                    Node n = new Node(MakeMove(player, move));
                     n.Depth = (short)(node.Depth + 1);
-                    this.UndoMove(n);
+                    UndoMove(n);
                     n.Player = !player;
                     children.Add(n);
                 }
@@ -398,9 +412,9 @@ namespace Ultimate_tic_tac_toe
             {
                 foreach (Tuple<short, short, short> move in moveList)
                 {
-                    Node n = new Node(this.MakeMove(player, move));
+                    Node n = new Node(MakeMove(player, move));
                     n.Depth = (short)(node.Depth + 1);
-                    this.UndoMove(n);
+                    UndoMove(n);
                     n.Player = !player;
                     children.Add(n);
                 }
@@ -412,19 +426,19 @@ namespace Ultimate_tic_tac_toe
         private short AB(Node node, short alpha, short beta, bool player)
         {
 
-            if (node.Depth >= this.MaxTreeDepth || IsTerminal(player, node))
+            if (node.Depth >= MaxTreeDepth || IsTerminal(player, node))
             {
-                node.Value = this.Evaluate(player);
-                this.UndoMove(node);
+                node.Value = Evaluate(player);
+                UndoMove(node);
                 return node.Value;
             }
 
             if (player == MaxPlayer)
             {
-                List<Node> children = this.Children(player, node);
+                List<Node> children = Children(player, node);
                 foreach (Node child in children)
                 {
-                    this.MakeMove(player, new Tuple<short, short, short>(child.Row, child.Col, child.BoardNumberPlayedOn));
+                    MakeMove(player, new Tuple<short, short, short>(child.Row, child.Col, child.BoardNumberPlayedOn));
                     alpha = Math.Max(alpha, AB(child, alpha, beta, !player));
 
                     if (beta <= alpha)
@@ -435,18 +449,18 @@ namespace Ultimate_tic_tac_toe
 
                 node.Value = alpha;
                 if (node.Depth == 1)
-                    this.nodes.Add(node);
+                    RootChildren.Add(node);
 
                 // Stack is unwinding, undo last move
-                this.UndoMove(node);
+                UndoMove(node);
                 return alpha;
             }
             else
             {
-                List<Node> children = this.Children(player, node);
+                List<Node> children = Children(player, node);
                 foreach (Node child in children)
                 {
-                    this.MakeMove(player, new Tuple<short, short, short>(child.Row, child.Col, child.BoardNumberPlayedOn));
+                    MakeMove(player, new Tuple<short, short, short>(child.Row, child.Col, child.BoardNumberPlayedOn));
                     beta = Math.Min(beta, AB(child, alpha, beta, !player));
 
                     if (beta <= alpha)
@@ -457,10 +471,10 @@ namespace Ultimate_tic_tac_toe
 
                 node.Value = beta;
                 if (node.Depth == 1)
-                    this.nodes.Add(node);
+                    RootChildren.Add(node);
 
                 // Stack is unwinding, undo last move
-                this.UndoMove(node);
+                UndoMove(node);
                 return beta;
             }
 
