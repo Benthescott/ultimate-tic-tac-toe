@@ -11,7 +11,6 @@ namespace Ultimate_tic_tac_toe
     {
         private Board BoardState;
         private bool MaxPlayer = true;
-        private short TreeDepth;
         private short MaxTreeDepth;
         private List<Node> nodes;
 
@@ -57,11 +56,10 @@ namespace Ultimate_tic_tac_toe
 
             //BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'X';
 
-            this.TreeDepth = 0;
             this.MaxTreeDepth = depth;
             nodes = new List<Node>();
 
-            short result = this.AB(new Node(this.TreeDepth, n.BoardNumberToPlayOn, this.MaxPlayer), short.MinValue, short.MaxValue, player);
+            short result = this.AB(n, short.MinValue, short.MaxValue, player);
 
             short max = short.MinValue;
             Node selectedNode = new Node();
@@ -81,11 +79,7 @@ namespace Ultimate_tic_tac_toe
             return v;
         }
 
-        public void UpdateBoard(bool player, Tuple<short, short, short> move)
-        {
-            MakeMove(player, move);
-        }
-
+       
 
         /// <summary>
         ///     This function makes one valid move.
@@ -268,7 +262,7 @@ namespace Ultimate_tic_tac_toe
                     result = 0;
                 else if (player == this.MaxPlayer && res.Item2 == 'O')
                     result += (short)(multiplier * 100);
-                else if (!player == this.MaxPlayer && res.Item2 == 'X')
+                else if (player == this.MaxPlayer && res.Item2 == 'X')
                     result += (short)(multiplier * 100);
                 else
                     result -= (short)(multiplier * 100);
@@ -311,9 +305,9 @@ namespace Ultimate_tic_tac_toe
                     if (res.Item2 == 'T')
                         return 0;
                     else if (res.Item2 == 'O')
-                        return short.MaxValue;
+                        return 10000;
                     else
-                        return short.MinValue;
+                        return -10000;
             }
             else
             {
@@ -322,9 +316,9 @@ namespace Ultimate_tic_tac_toe
                     if (res.Item2 == 'T')
                         return 0;
                     else if (res.Item2 == 'X')
-                        return short.MaxValue;
+                        return 10000;
                     else
-                        return short.MinValue;
+                        return -10000;
             }
 
 
@@ -376,7 +370,7 @@ namespace Ultimate_tic_tac_toe
                 foreach (Tuple<short, short, short> move in allMoves)
                 {
                     Node n = new Node(this.MakeMove(player, move));
-                    n.Depth = Convert.ToInt16(node.Depth + 1);
+                    n.Depth = (short)(node.Depth + 1);
                     this.UndoMove(n);
                     n.Player = !player;
                     children.Add(n);
@@ -387,7 +381,7 @@ namespace Ultimate_tic_tac_toe
                 foreach (Tuple<short, short, short> move in moveList)
                 {
                     Node n = new Node(this.MakeMove(player, move));
-                    n.Depth = Convert.ToInt16(node.Depth + 1);
+                    n.Depth = (short)(node.Depth + 1);
                     this.UndoMove(n);
                     n.Player = !player;
                     children.Add(n);
