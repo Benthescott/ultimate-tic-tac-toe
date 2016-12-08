@@ -178,5 +178,10 @@ namespace Ultimate_tic_tac_toe
             else
                 return (short)boardNumberToPlayOn;
         }
+
+        public bool isXturn()
+        {
+            return xTurn;
+        }
     }
 }
