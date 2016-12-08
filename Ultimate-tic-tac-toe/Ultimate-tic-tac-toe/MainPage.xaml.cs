@@ -29,6 +29,7 @@ namespace Ultimate_tic_tac_toe
         //enum WinDirection { DiagonalDownUp, DiagonalUpDown, Horizontal, Vertical };
 
         private Game game;
+        private bool firstTime;
 
         public MainPage()
         {
@@ -57,6 +58,7 @@ namespace Ultimate_tic_tac_toe
         {
             game = new Game();
             SetUpBoard();
+            firstTime = true;
         }
 
         private async void Btn_Click(object sender, RoutedEventArgs e)
@@ -82,10 +84,22 @@ namespace Ultimate_tic_tac_toe
                 }
 
                 UpdateTurnLabels('O', game.GetBNTPO());
+
                 //var context = TaskScheduler.FromCurrentSynchronizationContext();
                 //Task task = Task.Factory.StartNew(() => { Testing(); });
-                var AIMoveInfo = await Task.Run(() => Testing());
-
+                //await Task.Run(() => Testing234());
+                //await Task.Run(() => { MessageDialog msg = new MessageDialog("test"); }).ContinueWith(async (a, x) => { }).Unwrap();
+                if (firstTime)
+                {
+                    firstTime = false;
+                    Task x = new ContentDialog() {
+                        Content = "Please wait until the AI has made a move before clicking on the board", PrimaryButtonText = "Ok"
+                    }.ShowAsync().AsTask().ContinueWith((a) => { a.Wait(1000); });                    
+                }
+                
+                var AIMoveInfo = await Task.Run(() => AIThread());
+                
+                //testDialog.Hide();
                 switch (AIMoveInfo.Item1)
                 {
                     case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
@@ -108,7 +122,7 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
-        private Tuple<char, char, short, short, short> Testing()
+        private Tuple<char, char, short, short, short> AIThread()
         {
             //    AIMoveInfo:
             //    Tuple (char1, char2, short1, short2, short3)
