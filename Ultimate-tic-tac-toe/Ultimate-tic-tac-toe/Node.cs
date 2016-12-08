@@ -56,5 +56,12 @@ namespace Ultimate_tic_tac_toe
             this.MainChanged = false;
         }
 
+        public Node(short BNPO, short BNTPO, short row, short col)
+        {
+            this.BoardNumberPlayedOn = BNPO;
+            this.BoardNumberToPlayOn = BNTPO;
+            this.Row = row;
+            this.Col = col;
+        }
     }
 }

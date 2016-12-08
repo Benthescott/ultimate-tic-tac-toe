@@ -11,6 +11,7 @@ namespace Ultimate_tic_tac_toe
     {
         private Board board;
         private Move aMove;
+        private AlphaBeta AI;
         private short boardNumberToPlayOn;
         private short boardNumberPlayedOn;
         private bool isMoveUnlimited;
@@ -22,6 +23,28 @@ namespace Ultimate_tic_tac_toe
             isMoveUnlimited = true; // Player may choose any move at the beginning of the game
             board = new Board();
             aMove = new Move();
+            AI = new AlphaBeta();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// 
+        /// <returns>
+        ///     Tuple (char1, char2, short1, short2, short3)
+        ///     {
+        ///         char1 = either 'O' for AI's move, or game status (see MadeMove code for reference)
+        ///         char2 = only used if game is over or mini game is complete (see MadeMove code for reference)
+        ///         short1 = the board number the AI played on
+        ///         short2 = the AI's move row number
+        ///         short3 = the AI's move col number
+        ///     }
+        /// </returns>
+        public Tuple<char, char, short, short, short> MakeAIMove()
+        {
+            Node AINode = new Node(AI.MakeAIMove(new Node(boardNumberPlayedOn, boardNumberToPlayOn, aMove.row, aMove.col), 4, true));
+            Tuple<bool, char, char> moveResults = MadeMove(AINode.BoardNumberPlayedOn, AINode.Row, AINode.Col);
+            return new Tuple<char, char, short, short, short>(moveResults.Item2, moveResults.Item3, AINode.BoardNumberPlayedOn, AINode.Row, AINode.Col);
         }
 
         /// <summary>
@@ -40,6 +63,9 @@ namespace Ultimate_tic_tac_toe
 
             if (IsValidMove())
             {
+                if (!xTurn)
+                    UpdateBoard();
+
                 boardNumberToPlayOn = board.MainBoardCoord(moveRow, moveCol);
 
                 if (board.BoardComplete(board.MiniGames[boardNumberToPlayOn]).Item1)
@@ -84,18 +110,31 @@ namespace Ultimate_tic_tac_toe
 
         private bool IsValidMove()
         {
+            if (!xTurn)
+                return true;
+
+            if (isMoveUnlimited)
+            {
+                if (board.BoardComplete(board.MiniGames[boardNumberPlayedOn]).Item1)
+                    return false;       // Not a valid move
+                else if (board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] == 'B')
+                    return true;        // Valid move
+            }
+            else
+                if (!(boardNumberPlayedOn == boardNumberToPlayOn))  // Check if desired move is located in the required mini game
+                    return false;       // Not a valid move
+
             // If mini game has been finished, do not allow move within mini game
-            if (board.BoardComplete(board.MiniGames[boardNumberToPlayOn]).Item1)
-                return false;
-
-            // If the player may move anywhere and move is available; then move is valid
-            if (board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] == 'B')
-                if (isMoveUnlimited)
-                    return true;        // Valid move
-                else if (boardNumberPlayedOn == boardNumberToPlayOn)    // Check if desired move is located in the required mini game
-                    return true;        // Valid move
-
-            return false;       // Not a valid move
+            if (!board.BoardComplete(board.MiniGames[boardNumberToPlayOn]).Item1)
+            {
+                // If the player may move anywhere and move is available; then move is valid
+                if (board.MiniGames[boardNumberPlayedOn][aMove.row, aMove.col] == 'B')
+                    return true;       // Valid move
+                else
+                    return false;      // Not a valid move
+            }
+            else
+                return false;          // Not a valid move
         }
 
         private void UpdateBoard()
