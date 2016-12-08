@@ -13,6 +13,7 @@ namespace Ultimate_tic_tac_toe
         private bool MaxPlayer = true;
         private short MaxTreeDepth;
         private List<Node> nodes;
+        private Node root;
 
         public AlphaBeta()
         {
@@ -52,14 +53,14 @@ namespace Ultimate_tic_tac_toe
         /// </returns>
         public Node MakeAIMove(Node n, short depth, bool player)
         {
-            this.MakeMove(!player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn));
+            root = new Node(MakeMove(!player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn)));
 
             //BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'X';
 
             this.MaxTreeDepth = depth;
             nodes = new List<Node>();
 
-            short result = this.AB(n, short.MinValue, short.MaxValue, player);
+            short result = this.AB(root, short.MinValue, short.MaxValue, player);
 
             short max = short.MinValue;
             Node selectedNode = new Node();
@@ -79,7 +80,7 @@ namespace Ultimate_tic_tac_toe
             return v;
         }
 
-       
+
 
         /// <summary>
         ///     This function makes one valid move.
@@ -166,17 +167,34 @@ namespace Ultimate_tic_tac_toe
             return node;
         }
 
+        private bool IsRoot(Node n)
+        {
+            bool result = false;
+
+            if (n.BoardNumberPlayedOn == root.BoardNumberPlayedOn &&
+                n.BoardNumberToPlayOn == root.BoardNumberToPlayOn &&
+                n.Row == root.Row && n.Col == root.Col &&
+                n.Player == root.Player && n.Depth == root.Depth)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         private void UndoMove(Node n)
         {
-            BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'B';
-            if (n.MainChanged)
-                BoardState.Main[BoardState.BoardCoord(n.BoardNumberPlayedOn).Item1,
-                                BoardState.BoardCoord(n.BoardNumberPlayedOn).Item2] = 'B';
+            if (!IsRoot(n))
+            {
+                BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'B';
+                if (n.MainChanged)
+                    BoardState.Main[BoardState.BoardCoord(n.BoardNumberPlayedOn).Item1,
+                                    BoardState.BoardCoord(n.BoardNumberPlayedOn).Item2] = 'B';
+            }
         }
 
         private bool IsTerminal(bool Player, Node node)
         {
-
             if (BoardState.BoardComplete(BoardState.Main).Item1)
                 return true;
             else
