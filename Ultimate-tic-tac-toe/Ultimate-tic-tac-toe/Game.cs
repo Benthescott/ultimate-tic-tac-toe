@@ -42,7 +42,7 @@ namespace Ultimate_tic_tac_toe
         /// </returns>
         public Tuple<char, char, short, short, short> MakeAIMove()
         {
-            Node AINode = new Node(AI.MakeAIMove(new Node(boardNumberPlayedOn, boardNumberToPlayOn, aMove.row, aMove.col), 4, true));
+            Node AINode = new Node(AI.MakeAIMove(new Node(boardNumberPlayedOn, boardNumberToPlayOn, aMove.row, aMove.col), 8, true));
             Tuple<bool, char, char> moveResults = MadeMove(AINode.BoardNumberPlayedOn, AINode.Row, AINode.Col);
             return new Tuple<char, char, short, short, short>(moveResults.Item2, moveResults.Item3, AINode.BoardNumberPlayedOn, AINode.Row, AINode.Col);
         }
@@ -122,7 +122,7 @@ namespace Ultimate_tic_tac_toe
             }
             else
                 if (!(boardNumberPlayedOn == boardNumberToPlayOn))  // Check if desired move is located in the required mini game
-                    return false;       // Not a valid move
+                return false;       // Not a valid move
 
             // If mini game has been finished, do not allow move within mini game
             if (!board.BoardComplete(board.MiniGames[boardNumberToPlayOn]).Item1)
@@ -150,7 +150,7 @@ namespace Ultimate_tic_tac_toe
             {
                 Tuple<short, short> boardCoords = board.BoardCoord(boardNumberPlayedOn);
                 board.Main[boardCoords.Item1, boardCoords.Item2] = boardState.Item2;
-            }        
+            }
         }
 
         public Tuple<bool, char> IsGameOver()
@@ -169,6 +169,14 @@ namespace Ultimate_tic_tac_toe
                 xTurn = false;
             else
                 xTurn = true;
+        }
+
+        public short GetBNTPO()
+        {
+            if (isMoveUnlimited)
+                return (short)-1;
+            else
+                return (short)boardNumberToPlayOn;
         }
     }
 }
