@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,6 +29,7 @@ namespace Ultimate_tic_tac_toe
         //enum WinDirection { DiagonalDownUp, DiagonalUpDown, Horizontal, Vertical };
 
         private Game game;
+        private bool firstTime;
 
         public MainPage()
         {
@@ -47,15 +49,19 @@ namespace Ultimate_tic_tac_toe
                     brush1.ImageSource = new BitmapImage(new Uri("ms-appx:///images/blank.png"));
                     btn.Background = brush1;
                 }
+
+            turnText.Text = "X's turn";
+            locationText.Text = "Any board";
         }
 
         private void RestartGame()
         {
             game = new Game();
             SetUpBoard();
+            firstTime = true;
         }
 
-        private void Btn_Click(object sender, RoutedEventArgs e)
+        private async void Btn_Click(object sender, RoutedEventArgs e)
         {
             Button clickedBtn = sender as Button;
 
@@ -66,6 +72,8 @@ namespace Ultimate_tic_tac_toe
 
             if (UIinfo.Item1)
             {
+                UpdateTurnLabels('X', game.GetBNTPO());
+
                 // If UI needs to be updated (b/c it was a valid move)
                 switch (UIinfo.Item2)
                 {
@@ -75,25 +83,46 @@ namespace Ultimate_tic_tac_toe
                     default: PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); GameOver(UIinfo.Item3); break;
                 }
 
-                //Test();
-                Tuple<char, char, short, short, short> AIMoveInfo = game.MakeAIMove();
+                UpdateTurnLabels('O', game.GetBNTPO());
 
+                //var context = TaskScheduler.FromCurrentSynchronizationContext();
+                //Task task = Task.Factory.StartNew(() => { Testing(); });
+                //await Task.Run(() => Testing234());
+                //await Task.Run(() => { MessageDialog msg = new MessageDialog("test"); }).ContinueWith(async (a, x) => { }).Unwrap();
+                if (firstTime)
+                {
+                    firstTime = false;
+                    Task x = new ContentDialog() {
+                        Content = "Please wait until the AI has made a move before clicking on the board", PrimaryButtonText = "Ok"
+                    }.ShowAsync().AsTask().ContinueWith((a) => { a.Wait(1000); });                    
+                }
+                
+                var AIMoveInfo = await Task.Run(() => AIThread());
+                
+                //testDialog.Hide();
                 switch (AIMoveInfo.Item1)
                 {
                     case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
                     case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
                     default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
                 }
+
+                UpdateTurnLabels('X', game.GetBNTPO());
+                //await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { Testing(); });
+                //await this.MyTest(async () => await Testing());
+                /*Tuple<char, char, short, short, short> AIMoveInfo = game.MakeAIMove();
+                switch (AIMoveInfo.Item1)
+                {
+                    case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
+                    case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
+                    default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
+                }*/
+
+                //UpdateTurnLabels('X', game.GetBNTPO());
             }
         }
 
-        private async void Test()
-        {
-            await System.Threading.Tasks.Task.Run(() => Testing());
-            
-        }
-
-        private void Testing()
+        private Tuple<char, char, short, short, short> AIThread()
         {
             //    AIMoveInfo:
             //    Tuple (char1, char2, short1, short2, short3)
@@ -104,14 +133,8 @@ namespace Ultimate_tic_tac_toe
             //        short2 = the AI's move row number
             //        short3 = the AI's move col number
             //    }
-            Tuple<char, char, short, short, short> AIMoveInfo = game.MakeAIMove();
-
-            switch (AIMoveInfo.Item1)
-            {
-                case 'O': PlaceMove(AIMoveInfo.Item2, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
-                case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
-                default: GameOver(AIMoveInfo.Item2); break;
-            }
+            Tuple<char, char, short, short, short> moveInfo = game.MakeAIMove();
+            return moveInfo;
         }
 
         private void PlaceMove(char player, int boardN, int row, int col)
@@ -337,6 +360,25 @@ namespace Ultimate_tic_tac_toe
                     button.Background = brush2;
                 else
                     button.Background = brush3;
+            }
+        }
+
+        private void UpdateTurnLabels(char player, short boardNum)
+        {
+            turnText.Text = player + "'s";
+
+            switch (boardNum)
+            {
+                case 0: locationText.Text = "Must play in Top Left game"; break;
+                case 1: locationText.Text = "Must play in Top Middle game"; break;
+                case 2: locationText.Text = "Must play in Top Right game"; break;
+                case 3: locationText.Text = "Must play in Middle Left game"; break;
+                case 4: locationText.Text = "Must play in Middle Middle game"; break;
+                case 5: locationText.Text = "Must play in Middle Right game"; break;
+                case 6: locationText.Text = "Must play in Bottom Left game"; break;
+                case 7: locationText.Text = "Must play in Bottom Middle game"; break;
+                case 8: locationText.Text = "Must play in Bottom Right game"; break;
+                default: locationText.Text = "Any board"; break;
             }
         }
     }
