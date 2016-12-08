@@ -16,6 +16,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -64,61 +65,63 @@ namespace Ultimate_tic_tac_toe
         private async void Btn_Click(object sender, RoutedEventArgs e)
         {
             Button clickedBtn = sender as Button;
-
-            short bNum = short.Parse(clickedBtn.Name[3].ToString());
-            short moveRow = short.Parse(clickedBtn.Name[4].ToString());
-            short moveCol = short.Parse(clickedBtn.Name[5].ToString());
-            Tuple<bool, char, char> UIinfo = game.MadeMove(bNum, moveRow, moveCol);
-
-            if (UIinfo.Item1)
+            if (game.isXturn())
             {
-                UpdateTurnLabels('X', game.GetBNTPO());
+                short bNum = short.Parse(clickedBtn.Name[3].ToString());
+                short moveRow = short.Parse(clickedBtn.Name[4].ToString());
+                short moveCol = short.Parse(clickedBtn.Name[5].ToString());
+                Tuple<bool, char, char> UIinfo = game.MadeMove(bNum, moveRow, moveCol);
 
-                // If UI needs to be updated (b/c it was a valid move)
-                switch (UIinfo.Item2)
+                if (UIinfo.Item1)
                 {
-                    case 'X': PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); break;
-                    case 'O': PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); break;
-                    case 'M': MiniGameOver(UIinfo.Item3, bNum); break;
-                    default: PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); GameOver(UIinfo.Item3); break;
+                    UpdateTurnLabels('X', game.GetBNTPO());
+
+                    // If UI needs to be updated (b/c it was a valid move)
+                    switch (UIinfo.Item2)
+                    {
+                        case 'X': PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); break;
+                        case 'O': PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); break;
+                        case 'M': MiniGameOver(UIinfo.Item3, bNum); break;
+                        default: PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); GameOver(UIinfo.Item3); break;
+                    }
+
+                    UpdateTurnLabels('O', game.GetBNTPO());
+
+                    if (firstTime)
+                    {
+                        firstTime = false;
+                        Task x = new ContentDialog()
+                        {
+                            Content = "Please wait until the AI has made a move before clicking on the board",
+                            PrimaryButtonText = "Ok"
+                        }.ShowAsync().AsTask();
+                    }
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    var AIMoveInfo = await Task.Run(() => AIThread());
+                    sw.Stop();
+                    Debug.WriteLine((sw.ElapsedMilliseconds/ 1000) + " seconds\n");
+
+                    switch (AIMoveInfo.Item1)
+                    {
+                        case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
+                        case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
+                        default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
+                    }
+
+                    UpdateTurnLabels('X', game.GetBNTPO());
+                    //await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { Testing(); });
+                    //await this.MyTest(async () => await Testing());
+                    /*Tuple<char, char, short, short, short> AIMoveInfo = game.MakeAIMove();
+                    switch (AIMoveInfo.Item1)
+                    {
+                        case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
+                        case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
+                        default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
+                    }*/
+
+                    //UpdateTurnLabels('X', game.GetBNTPO());
                 }
-
-                UpdateTurnLabels('O', game.GetBNTPO());
-
-                //var context = TaskScheduler.FromCurrentSynchronizationContext();
-                //Task task = Task.Factory.StartNew(() => { Testing(); });
-                //await Task.Run(() => Testing234());
-                //await Task.Run(() => { MessageDialog msg = new MessageDialog("test"); }).ContinueWith(async (a, x) => { }).Unwrap();
-                if (firstTime)
-                {
-                    firstTime = false;
-                    Task x = new ContentDialog() {
-                        Content = "Please wait until the AI has made a move before clicking on the board", PrimaryButtonText = "Ok"
-                    }.ShowAsync().AsTask().ContinueWith((a) => { a.Wait(1000); });                    
-                }
-                
-                var AIMoveInfo = await Task.Run(() => AIThread());
-                
-                //testDialog.Hide();
-                switch (AIMoveInfo.Item1)
-                {
-                    case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
-                    case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
-                    default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
-                }
-
-                UpdateTurnLabels('X', game.GetBNTPO());
-                //await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { Testing(); });
-                //await this.MyTest(async () => await Testing());
-                /*Tuple<char, char, short, short, short> AIMoveInfo = game.MakeAIMove();
-                switch (AIMoveInfo.Item1)
-                {
-                    case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
-                    case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
-                    default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
-                }*/
-
-                //UpdateTurnLabels('X', game.GetBNTPO());
             }
         }
 
