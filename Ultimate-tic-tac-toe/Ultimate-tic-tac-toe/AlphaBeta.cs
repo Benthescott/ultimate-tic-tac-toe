@@ -39,6 +39,13 @@ namespace Ultimate_tic_tac_toe
         /// 
         ///     Public method for initiating the AI making a move.
         ///     
+        ///     (1) Gets move from Xplayer, applies move to board
+        ///     (2) Sets MaxDepth
+        ///     (3) Begins Alpha Beta pruning algorithm
+        ///     (4) Gets best move from root children (max of 9)
+        ///     (5) Applies move to board
+        ///     (6) returns move
+        ///     
         /// </summary>
         /// <param name="n">
         /// 
@@ -84,6 +91,11 @@ namespace Ultimate_tic_tac_toe
         ///     Secondary evaluation function. Exists to keep the AI from making some game losing errors,
         ///     because the heuristic function is simplistic and doesn't account for many special cases.
         ///     If none of the special cases exist, the child with the highest heuristic score is chosen.
+        ///     
+        ///     (1) if game is over and you won, pick this one
+        ///     (2) else if you won the board you played on, pick this one
+        ///     (3) else if the board you played on is not worth as much as the opponents board, skip it
+        ///     (4) else use score of node
         /// 
         /// </summary>
         /// <returns>
@@ -271,6 +283,9 @@ namespace Ultimate_tic_tac_toe
         /// 
         ///     Lowest level evaluation, assign value to one sequence of 3 spaces on a single board.
         ///     
+        ///     If one char in a row with two blanks, add 10 to score
+        ///     if two chars in a row with one blank, add 100 to score
+        ///     
         /// </summary>
         /// <param name="player">
         /// 
@@ -327,6 +342,9 @@ namespace Ultimate_tic_tac_toe
         /// <param name="board">
         /// 
         ///     The 3x3 char array that represents one mini board or the main board.
+        ///     
+        ///     If game is over, add 100 * multiplier to score
+        ///     else add score of each line in the board
         /// 
         /// </param>
         /// <param name="player">
@@ -390,6 +408,10 @@ namespace Ultimate_tic_tac_toe
         ///     This is the high level static evaluation function. This function
         ///     loops through all mini-games and passes each one to the mid-level
         ///     evaluation function, adding up their individual heuristic scores.
+        ///     
+        ///     If game is over and you won, score as 10,000
+        ///         else -10,000
+        ///     else score as normal
         ///     
         /// </summary>
         /// <param name="player">
@@ -542,7 +564,10 @@ namespace Ultimate_tic_tac_toe
 
         /// <summary>
         /// 
-        ///     This function contains the Alpha Beta pruning algorithm.
+        ///     This function contains the Alpha Beta pruning algorithm. Nodes are just moves
+        ///     that were applied to the baord, which is one global class-level variable.
+        ///     As is recurses down the tree, it applies moves. When it returns, in undoes those moves.
+        ///     This way it saves memory.
         /// 
         /// </summary>
         /// <param name="node">
