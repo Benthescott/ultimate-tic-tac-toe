@@ -11,6 +11,9 @@ namespace Ultimate_tic_tac_toe
         public short row;
         public short col;
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Move() { }
 
         /// <summary>
@@ -23,12 +26,5 @@ namespace Ultimate_tic_tac_toe
             row = x;
             col = y;
         }
-
-        public Move(Move m)
-        {
-            row = m.row;
-            col = m.col;
-        }
-
     }
 }
