@@ -20,37 +20,6 @@ namespace Ultimate_tic_tac_toe
             BoardState = new Board();
         }
 
-        /// <summary>
-        /// 
-        ///     (From Game.cs)
-        ///     Call: node = new Node(AI.MakeAIMove(node, 8, true));
-        /// 
-        /// </summary>
-        /// <param name="n">
-        ///     Node instance should contain:
-        ///     {
-        ///         BoardNumberPlayedOn = boardNum (The board the player used)
-        ///         BoardNumberToPlayOn = (The board TO play on)
-        ///         Row = (Row the player used)
-        ///         Col = (Col the player used)
-        ///     }
-        /// </param>
-        /// <param name="depth">
-        /// 
-        ///     Depth of each AI search: Just pass 4 or 8; 8 will take longer.    
-        /// 
-        /// </param>
-        /// <param name="player">
-        /// 
-        ///     Always pass true
-        /// 
-        /// </param>
-        /// <returns>
-        /// 
-        ///     Returns a Node instance containing all info needed to update the GUI
-        ///     with the AI's move
-        /// 
-        /// </returns>
         public Node MakeAIMove(Node n, short depth, bool player)
         {
             root = new Node(MakeMove(player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn)));
@@ -64,7 +33,7 @@ namespace Ultimate_tic_tac_toe
 
 
             Node selectedNode = new Node(BestMove());
-            
+
 
             Debug.WriteLine("AI Move: " + selectedNode.BoardNumberPlayedOn + " " + selectedNode.Row + " " + selectedNode.Col);
 
@@ -91,14 +60,8 @@ namespace Ultimate_tic_tac_toe
                     UndoMove(node);
                     return node;
                 }
-                else if (BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberToPlayOn]).Item1 && 
-                        !BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberPlayedOn]).Item1)
-                {
-                    UndoMove(node);
-                    continue;
-                }
-                else if (EvaluateBoard(BoardState.MiniGames[node.BoardNumberPlayedOn], node.Player, 1) < 
-                         EvaluateBoard(BoardState.MiniGames[node.BoardNumberToPlayOn], !node.Player, 1) && 
+                else if (EvaluateBoard(BoardState.MiniGames[node.BoardNumberPlayedOn], node.Player, 1) <
+                         EvaluateBoard(BoardState.MiniGames[node.BoardNumberToPlayOn], !node.Player, 1) &&
                          !BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberPlayedOn]).Item1)
                 {
                     UndoMove(node);
@@ -129,76 +92,32 @@ namespace Ultimate_tic_tac_toe
         {
             // Make new node
             Node node = new Node();
-
-            // If 'O' player
+            char playerCharacter;
+            // Set playerCharacter based on respective player
             if (player == MaxPlayer)
-            {
-
-                // Make any 'B' space on boardNum 'O'
-                BoardState.MiniGames[move.Item3][move.Item1, move.Item2] = 'O';
-
-                // If move made caused Main Board to change, set node.MainChanged to true
-                if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item1)
-                {
-                    if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item2 == 'T')
-                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'T';
-                    else
-                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'O';
-                    node.MainChanged = true;
-                }
-
-
-
-                // set row/col in node equal to move made
-                node.Row = move.Item1;
-                node.Col = move.Item2;
-
-
-
-                // set node.BoardNumberPlayedOn = to boardNum
-                node.BoardNumberPlayedOn = move.Item3;
-
-                // set node.BoardNumberToPlayOn = board opponent must play on next
-                node.BoardNumberToPlayOn = BoardState.MainBoardCoord(move.Item1, move.Item2);
-
-                // set node.Player = player
-                node.Player = player;
-            }
-
-            // 'X' player
+                playerCharacter = 'O';
             else
+                playerCharacter = 'X';
+            // Make any 'B' space on boardNum playerCharacter
+            BoardState.MiniGames[move.Item3][move.Item1, move.Item2] = playerCharacter;
+            // If move made caused Main Board to change, set node.MainChanged to true
+            if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item1)
             {
-
-                // Make 'B' space on boardNum 'X'
-                BoardState.MiniGames[move.Item3][move.Item1, move.Item2] = 'X';
-
-                // If move made caused Main Board to change, set node.MainChanged to true
-                if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item1)
-                {
-                    if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item2 == 'T')
-                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'T';
-                    else
-                        BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'X';
-                    node.MainChanged = true;
-                }
-
-
-                // set row/col in node equal to move made
-                node.Row = move.Item1;
-                node.Col = move.Item2;
-
-
-
-                // set node.BoardNumberPlayedOn = to boardNum
-                node.BoardNumberPlayedOn = move.Item3;
-
-                // set node.BoardNumberToPlayOn = board opponent must play on next
-                node.BoardNumberToPlayOn = BoardState.MainBoardCoord(move.Item1, move.Item2);
-
-                // set node.Player = player
-                node.Player = player;
+                if (BoardState.BoardComplete(BoardState.MiniGames[move.Item3]).Item2 == 'T')
+                    BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = 'T';
+                else
+                    BoardState.Main[BoardState.BoardCoord(move.Item3).Item1, BoardState.BoardCoord(move.Item3).Item2] = playerCharacter;
+                node.MainChanged = true;
             }
-
+            // set row/col in node equal to move made
+            node.Row = move.Item1;
+            node.Col = move.Item2;
+            // set node.BoardNumberPlayedOn = to boardNum
+            node.BoardNumberPlayedOn = move.Item3;
+            // set node.BoardNumberToPlayOn = board opponent must play on next
+            node.BoardNumberToPlayOn = BoardState.MainBoardCoord(move.Item1, move.Item2);
+            // set node.Player = player
+            node.Player = player;
             return node;
         }
 
@@ -246,66 +165,27 @@ namespace Ultimate_tic_tac_toe
         private short EvaluateLine(bool player, char[] line)
         {
             short result = 0;
-            short xPlayer = 0;
-            short oPlayer = 0;
+            short playerCharacterCount = 0;
             short blanks = 0;
-            bool contiguous = false;
-
+            char playerCharacter;
             if (player == MaxPlayer)
-            {
-                for (short i = 0; i < 3; i++)
-                {
-                    if (line[i] == 'O')
-                    {
-                        oPlayer++;
-                        if (i == 1)
-                            if (line[i - 1] == 'O' || line[i + 1] == 'O')
-                                contiguous = true;
-                    }
-                    else if (line[i] == 'B')
-                        blanks++;
-
-                    
-                }
-
-                if (oPlayer + blanks == 3)
-                {
-                    if (oPlayer == 1)
-                        result++;
-                    else if (oPlayer == 2)
-                        result += 10;
-
-                    if (contiguous)
-                        result += 10;
-                }
-            }
+                playerCharacter = 'O';
             else
+                playerCharacter = 'X';
+            for (short i = 0; i < 3; i++)
             {
-                for (short i = 0; i < 3; i++)
-                {
-                    if (line[i] == 'X')
-                    {
-                        xPlayer++;
-                        if (i == 1)
-                            if (line[i - 1] == 'X' || line[i + 1] == 'X')
-                                contiguous = true;
-                    }
-                    else if (line[i] == 'B')
-                        blanks++;
-                }
-
-                if (xPlayer + blanks == 3)
-                {
-                    if (xPlayer == 1)
-                        result++;
-                    else if (xPlayer == 2)
-                        result += 10;
-
-                    if (contiguous)
-                        result += 10;
-                }
+                if (line[i] == playerCharacter)
+                    playerCharacterCount++;
+                else if (line[i] == 'B')
+                    blanks++;
             }
-
+            if (playerCharacterCount + blanks == 3)
+            {
+                if (playerCharacterCount == 1)
+                    result += 10;
+                else if (playerCharacterCount == 2)
+                    result += 100;
+            }
             return result;
         }
 
@@ -470,13 +350,43 @@ namespace Ultimate_tic_tac_toe
             return children;
         }
 
+
+        /// <summary>
+        /// 
+        /// This function 
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="node">
+        /// 
+        ///     The current node being evaluated.
+        ///     
+        /// </param>
+        /// <param name="alpha">
+        /// 
+        ///     Current value of alpha
+        ///     
+        /// </param>
+        /// <param name="beta">
+        /// 
+        ///     Current value of beta
+        ///     
+        /// </param>
+        /// <param name="player">
+        /// 
+        /// Current player, Max or Min
+        /// 
+        /// </param>
+        /// <returns></returns>
         private short AB(Node node, short alpha, short beta, bool player)
         {
 
             if (node.Depth >= MaxTreeDepth || IsTerminal(player, node))
             {
                 node.Value = Evaluate(player, node);
-                //node.Value -= EvaluateBoard(BoardState.MiniGames[node.BoardNumberToPlayOn], !node.Player, 1);
+                node.Value -= EvaluateBoard(BoardState.MiniGames[node.BoardNumberToPlayOn], !node.Player, 1);
+
+                // Stack is unwinding, undo last move
                 UndoMove(node);
                 return node.Value;
             }
