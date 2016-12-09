@@ -62,7 +62,7 @@ namespace Ultimate_tic_tac_toe
             firstTime = true;
         }
 
-        private async void Btn_Click(object sender, RoutedEventArgs e)
+        private void Btn_Click(object sender, RoutedEventArgs e)
         {
             Button clickedBtn = sender as Button;
             if (game.isXturn())
@@ -85,32 +85,25 @@ namespace Ultimate_tic_tac_toe
                         default: PlaceMove(UIinfo.Item2, bNum, moveRow, moveCol); GameOver(UIinfo.Item3); break;
                     }
 
-                    UpdateTurnLabels('O', game.GetBNTPO());
-
-                    if (firstTime)
+                    if (UIinfo.Item2 != 'G')
                     {
-                        firstTime = false;
-                        Task x = new ContentDialog()
+                        UpdateTurnLabels('O', game.GetBNTPO());
+
+                        Stopwatch sw = new Stopwatch();
+                        sw.Start();
+                        Tuple<char, char, short, short, short> AIMoveInfo = AIThread();
+                        sw.Stop();
+                        Debug.WriteLine((sw.ElapsedMilliseconds / 1000) + " seconds\n");
+
+                        switch (AIMoveInfo.Item1)
                         {
-                            Content = "Please wait until the AI has made a move before clicking on the board",
-                            PrimaryButtonText = "Ok"
-                        }.ShowAsync().AsTask();
+                            case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
+                            case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
+                            default: PlaceMove(AIMoveInfo.Item2, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
+                        }
+
+                        UpdateTurnLabels('X', game.GetBNTPO());
                     }
-
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
-                    var AIMoveInfo = AIThread();
-                    sw.Stop();
-                    Debug.WriteLine((sw.ElapsedMilliseconds / 1000) + " seconds\n");
-
-                    switch (AIMoveInfo.Item1)
-                    {
-                        case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
-                        case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
-                        default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
-                    }
-
-                    UpdateTurnLabels('X', game.GetBNTPO());
                 }
             }
         }
@@ -358,7 +351,7 @@ namespace Ultimate_tic_tac_toe
 
         private void UpdateTurnLabels(char player, short boardNum)
         {
-            turnText.Text = player + "'s";
+            turnText.Text = player + "'s turn";
 
             switch (boardNum)
             {
