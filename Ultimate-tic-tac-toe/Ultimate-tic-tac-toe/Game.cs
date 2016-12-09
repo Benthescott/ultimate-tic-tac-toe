@@ -17,6 +17,9 @@ namespace Ultimate_tic_tac_toe
         private bool isMoveUnlimited;
         private bool xTurn;
 
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public Game()
         {
             xTurn = true;           // Player will always be X and go first
@@ -27,7 +30,8 @@ namespace Ultimate_tic_tac_toe
         }
 
         /// <summary>
-        /// 
+        /// This function handles the AI function calls and return values. Then returns the values that the controller
+        ///     needs to update the GUI.
         /// </summary>
         /// 
         /// <returns>
@@ -42,20 +46,23 @@ namespace Ultimate_tic_tac_toe
         /// </returns>
         public Tuple<char, char, short, short, short> MakeAIMove()
         {
+            // The second paramter of the AI.MakeAIMove() call is the hard coded value for the AI algorithm's depth
             Node AINode = new Node(AI.MakeAIMove(new Node(boardNumberPlayedOn, boardNumberToPlayOn, aMove.row, aMove.col), 7, false));
             Tuple<bool, char, char> moveResults = MadeMove(AINode.BoardNumberPlayedOn, AINode.Row, AINode.Col);
             return new Tuple<char, char, short, short, short>(moveResults.Item2, moveResults.Item3, AINode.BoardNumberPlayedOn, AINode.Row, AINode.Col);
         }
 
         /// <summary>
-        /// Processes a move and returns a tuple of 3. Bool for valid move,
-        ///     char #1 for whose move or (mini or main) game state,
-        ///     char #2 for winner, tie, or just regular move
+        /// The majority of the model's work is done in this function. It validates the move, calls the 
+        ///     update function, processes the move, and returns a tuple that represents the move's result in the game.
         /// </summary>
-        /// <param name="boardNum"></param>
-        /// <param name="moveRow"></param>
-        /// <param name="moveCol"></param>
-        /// <returns></returns>
+        /// <param name="boardNum">Number of the board that was played on</param>
+        /// <param name="moveRow">The row number (0-2) of the move within a mini game</param>
+        /// <param name="moveCol">The column number (0-2) of the move within a mini game</param>
+        /// <returns>
+        ///     Bool for valid move,
+        ///     char #1 for who moved (if valid) or for the mini or main game state,
+        ///     char #2 for winner, tie, or just regular move.</returns>
         public Tuple<bool, char, char> MadeMove(short boardNum, short moveRow, short moveCol)
         {
             boardNumberPlayedOn = boardNum;
@@ -108,6 +115,10 @@ namespace Ultimate_tic_tac_toe
                 return new Tuple<bool, char, char>(false, 'B', 'B');         // Not a valid move
         }
 
+        /// <summary>
+        /// This boolean function determines if the move was valid. The move is previously stored in the Move object called 'aMove'.
+        /// </summary>
+        /// <returns>A bool (True/False)</returns>
         private bool IsValidMove()
         {
             if (!xTurn)
@@ -137,6 +148,9 @@ namespace Ultimate_tic_tac_toe
                 return false;          // Not a valid move
         }
 
+        /// <summary>
+        /// This function updates the game board. It uses global variables to update the game board appropriately.
+        /// </summary>
         private void UpdateBoard()
         {
             if (xTurn)
@@ -153,16 +167,38 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
+        /// <summary>
+        /// This function checks the game board for an overall win (a big game win).
+        /// </summary>
+        /// <returns>  
+        /// A tuple with a boolean and char. If the game is over, the boolean is 
+        ///     true and the char is used to determine who won or if the game is a tie.
+        ///     Otherwise, the boolean is just false and the char is not used.
+        /// </returns>
         public Tuple<bool, char> IsGameOver()
         {
             return board.BoardComplete(board.Main);
         }
 
+        /// <summary>
+        /// This function checks the mini game board for a win or tie state.
+        /// </summary>
+        /// <param name="boardNum">The number of a mini game board</param>
+        /// <returns>
+        /// A tuple with a boolean and char. If the mini game is over, the boolean is 
+        ///     true and the char is used to determine who won or if the mini game is a tie.
+        ///     Otherwise, the boolean is just false and the char is not used.
+        /// </returns>
         private Tuple<bool, char> IsMiniGameOver(short boardNum)
         {
             return board.BoardComplete(board.MiniGames[boardNum]);
         }
 
+        /// <summary>
+        /// This function reduces the repetitive code that flips the xTurn boolean. This is 
+        ///     important for the model to determine if it's the player's turn or AI's move.
+        ///     The AI's move is treated slightly differently than the player's move.
+        /// </summary>
         private void TurnManager()
         {
             if (xTurn)
@@ -171,6 +207,14 @@ namespace Ultimate_tic_tac_toe
                 xTurn = true;
         }
 
+        /// <summary>
+        /// This function gets the Board Number To Play On (shorthand is BNTPO) if the move is limited to a 
+        ///     specific mini game. 
+        /// </summary>
+        /// <returns>
+        /// -1 if the move may be placed anywhere in the game (determined via isMoveUnlimited boolean) OR
+        ///     the boardNumberToPlayOn value.
+        /// </returns>
         public short GetBNTPO()
         {
             if (isMoveUnlimited)
@@ -179,6 +223,10 @@ namespace Ultimate_tic_tac_toe
                 return (short)boardNumberToPlayOn;
         }
 
+        /// <summary>
+        /// Gets the value of the boolean private member 'xTurn'
+        /// </summary>
+        /// <returns>The value of the private boolean called 'xTurn'</returns>
         public bool isXturn()
         {
             return xTurn;
