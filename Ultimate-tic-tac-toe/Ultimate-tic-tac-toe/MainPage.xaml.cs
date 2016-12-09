@@ -96,11 +96,12 @@ namespace Ultimate_tic_tac_toe
                             PrimaryButtonText = "Ok"
                         }.ShowAsync().AsTask();
                     }
+
                     Stopwatch sw = new Stopwatch();
                     sw.Start();
-                    var AIMoveInfo = await Task.Run(() => AIThread());
+                    var AIMoveInfo = AIThread();
                     sw.Stop();
-                    Debug.WriteLine((sw.ElapsedMilliseconds/ 1000) + " seconds\n");
+                    Debug.WriteLine((sw.ElapsedMilliseconds / 1000) + " seconds\n");
 
                     switch (AIMoveInfo.Item1)
                     {
@@ -110,17 +111,6 @@ namespace Ultimate_tic_tac_toe
                     }
 
                     UpdateTurnLabels('X', game.GetBNTPO());
-                    //await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { Testing(); });
-                    //await this.MyTest(async () => await Testing());
-                    /*Tuple<char, char, short, short, short> AIMoveInfo = game.MakeAIMove();
-                    switch (AIMoveInfo.Item1)
-                    {
-                        case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
-                        case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
-                        default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
-                    }*/
-
-                    //UpdateTurnLabels('X', game.GetBNTPO());
                 }
             }
         }
