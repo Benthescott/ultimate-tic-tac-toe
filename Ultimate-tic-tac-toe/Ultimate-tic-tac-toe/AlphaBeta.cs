@@ -13,7 +13,6 @@ namespace Ultimate_tic_tac_toe
         private bool MaxPlayer = true;
         private short MaxTreeDepth;
         private List<Node> RootChildren;
-        private List<Node> RootChildren2;
         private Node root;
 
         public AlphaBeta()
@@ -56,22 +55,16 @@ namespace Ultimate_tic_tac_toe
         {
             root = new Node(MakeMove(player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn)));
 
-            //BoardState.MiniGames[n.BoardNumberPlayedOn][n.Row, n.Col] = 'X';
 
             MaxTreeDepth = depth;
             RootChildren = new List<Node>();
-            RootChildren2 = new List<Node>();
-            
+
             short result = AB(root, short.MinValue, short.MaxValue, player);
 
-            short max = short.MinValue;
-            foreach(Node nd in RootChildren2)
-            {
-                if (max < nd.Value)
-                    max = nd.Value;
-            }
+
 
             Node selectedNode = new Node(BestMove());
+            
 
             Debug.WriteLine("AI Move: " + selectedNode.BoardNumberPlayedOn + " " + selectedNode.Row + " " + selectedNode.Col);
 
@@ -86,33 +79,38 @@ namespace Ultimate_tic_tac_toe
             Node selectedNode = new Node();
             foreach (Node child in RootChildren)
             {
-                MakeMove(true, new Tuple<short, short, short>(child.Row, child.Col, child.BoardNumberPlayedOn));
+                Node node = new Node(MakeMove(true, new Tuple<short, short, short>(child.Row, child.Col, child.BoardNumberPlayedOn)));
                 if (BoardState.BoardComplete(BoardState.Main).Item1 && BoardState.BoardComplete(BoardState.Main).Item2 == 'O')
                 {
-                    UndoMove(child);
-                    return child;
+                    UndoMove(node);
+                    return node;
                 }
-                else if (BoardState.BoardComplete(BoardState.MiniGames[child.BoardNumberToPlayOn]).Item1 && BoardState.BoardComplete(BoardState.MiniGames[child.BoardNumberPlayedOn]).Item1)
+                else if (BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberPlayedOn]).Item1 &&
+                         BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberPlayedOn]).Item2 == 'O')
                 {
-                    UndoMove(child);
+                    UndoMove(node);
+                    return node;
                 }
-                else if (BoardState.BoardComplete(BoardState.MiniGames[child.BoardNumberToPlayOn]).Item1 && !BoardState.BoardComplete(BoardState.MiniGames[child.BoardNumberPlayedOn]).Item1)
+                else if (BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberToPlayOn]).Item1 && 
+                        !BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberPlayedOn]).Item1)
                 {
-                    UndoMove(child);
+                    UndoMove(node);
                     continue;
                 }
-                else if (EvaluateBoard(BoardState.MiniGames[child.BoardNumberPlayedOn], child.Player, 1) < EvaluateBoard(BoardState.MiniGames[child.BoardNumberToPlayOn], !child.Player, 1) && !BoardState.BoardComplete(BoardState.MiniGames[child.BoardNumberPlayedOn]).Item1)
+                else if (EvaluateBoard(BoardState.MiniGames[node.BoardNumberPlayedOn], node.Player, 1) < 
+                         EvaluateBoard(BoardState.MiniGames[node.BoardNumberToPlayOn], !node.Player, 1) && 
+                         !BoardState.BoardComplete(BoardState.MiniGames[node.BoardNumberPlayedOn]).Item1)
                 {
-                    UndoMove(child);
+                    UndoMove(node);
                     continue;
                 }
                 else
                 {
-                    UndoMove(child);
+                    UndoMove(node);
                     if (max < child.Value)
                     {
                         max = child.Value;
-                        selectedNode = new Node(child);
+                        selectedNode = new Node(node);
                     }
                 }
             }
@@ -251,15 +249,23 @@ namespace Ultimate_tic_tac_toe
             short xPlayer = 0;
             short oPlayer = 0;
             short blanks = 0;
+            bool contiguous = false;
 
             if (player == MaxPlayer)
             {
                 for (short i = 0; i < 3; i++)
                 {
                     if (line[i] == 'O')
+                    {
                         oPlayer++;
+                        if (i == 1)
+                            if (line[i - 1] == 'O' || line[i + 1] == 'O')
+                                contiguous = true;
+                    }
                     else if (line[i] == 'B')
                         blanks++;
+
+                    
                 }
 
                 if (oPlayer + blanks == 3)
@@ -268,6 +274,9 @@ namespace Ultimate_tic_tac_toe
                         result++;
                     else if (oPlayer == 2)
                         result += 10;
+
+                    if (contiguous)
+                        result += 10;
                 }
             }
             else
@@ -275,7 +284,12 @@ namespace Ultimate_tic_tac_toe
                 for (short i = 0; i < 3; i++)
                 {
                     if (line[i] == 'X')
+                    {
                         xPlayer++;
+                        if (i == 1)
+                            if (line[i - 1] == 'X' || line[i + 1] == 'X')
+                                contiguous = true;
+                    }
                     else if (line[i] == 'B')
                         blanks++;
                 }
@@ -285,6 +299,9 @@ namespace Ultimate_tic_tac_toe
                     if (xPlayer == 1)
                         result++;
                     else if (xPlayer == 2)
+                        result += 10;
+
+                    if (contiguous)
                         result += 10;
                 }
             }
@@ -459,7 +476,7 @@ namespace Ultimate_tic_tac_toe
             if (node.Depth >= MaxTreeDepth || IsTerminal(player, node))
             {
                 node.Value = Evaluate(player, node);
-                node.Value -= EvaluateBoard(BoardState.MiniGames[node.BoardNumberToPlayOn], !node.Player, 1);
+                //node.Value -= EvaluateBoard(BoardState.MiniGames[node.BoardNumberToPlayOn], !node.Player, 1);
                 UndoMove(node);
                 return node.Value;
             }
@@ -501,7 +518,7 @@ namespace Ultimate_tic_tac_toe
                 }
 
                 node.Value = beta;
-                if(node.Depth == 1)
+                if (node.Depth == 1)
                     RootChildren.Add(node);
 
                 // Stack is unwinding, undo last move
