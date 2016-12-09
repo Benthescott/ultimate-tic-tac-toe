@@ -100,7 +100,7 @@ namespace Ultimate_tic_tac_toe
                     sw.Start();
                     var AIMoveInfo = await Task.Run(() => AIThread());
                     sw.Stop();
-                    Debug.WriteLine((sw.ElapsedMilliseconds/ 1000) + " seconds\n");
+                    Debug.WriteLine((sw.ElapsedMilliseconds / 1000) + " seconds\n");
 
                     switch (AIMoveInfo.Item1)
                     {
