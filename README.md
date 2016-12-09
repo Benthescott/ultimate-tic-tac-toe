@@ -3,4 +3,4 @@
 
 ## Authors: Ethan Carrell and Ben Cline
 
-This is game was developed with an AI for Harding University class COMP 430 "AI".
+This game was developed with an AI for Harding University class COMP 430 "AI".
