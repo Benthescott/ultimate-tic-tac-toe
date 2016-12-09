@@ -91,7 +91,7 @@ namespace Ultimate_tic_tac_toe
 
                         Stopwatch sw = new Stopwatch();
                         sw.Start();
-                        var AIMoveInfo = AIThread();
+                        Tuple<char, char, short, short, short> AIMoveInfo = AIThread();
                         sw.Stop();
                         Debug.WriteLine((sw.ElapsedMilliseconds / 1000) + " seconds\n");
 
@@ -99,7 +99,7 @@ namespace Ultimate_tic_tac_toe
                         {
                             case 'O': PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); break;
                             case 'M': MiniGameOver(AIMoveInfo.Item2, AIMoveInfo.Item3); break;
-                            default: PlaceMove(AIMoveInfo.Item1, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
+                            default: PlaceMove(AIMoveInfo.Item2, AIMoveInfo.Item3, AIMoveInfo.Item4, AIMoveInfo.Item5); GameOver(AIMoveInfo.Item2); break;
                         }
 
                         UpdateTurnLabels('X', game.GetBNTPO());
