@@ -8,10 +8,15 @@ namespace Ultimate_tic_tac_toe
 {
     class Board
     {
+        // All mini-games in the game board
         public List<char[,]> MiniGames;
 
+        // Main (big) game board
         public char[,] Main;
 
+        /// <summary>
+        ///     default constructor
+        /// </summary>
         public Board()
         {
             this.MiniGames = new List<char[,]>();
@@ -19,6 +24,10 @@ namespace Ultimate_tic_tac_toe
             this.InitBoards();
         }
 
+        /// <summary>
+        ///     Copy contructor
+        /// </summary>
+        /// <param name="b"></param>
         public Board(Board b)
         {
             this.MiniGames = new List<char[,]>();
@@ -37,6 +46,9 @@ namespace Ultimate_tic_tac_toe
                     }
         }
 
+        /// <summary>
+        ///    Makes every space on the board a blank space
+        /// </summary>
         private void InitBoards()
         {
             for (short x = 0; x < 9; x++)
@@ -51,6 +63,20 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
+
+        /// <summary>
+        ///     Check if a win is in the right diagonal
+        /// </summary>
+        /// <param name="board">
+        /// 
+        ///     Board to be evaluated
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     X, O or N, for X win, O win, or No winner
+        /// 
+        /// </returns>
         private char CheckRightDiaganolWin(char[,] board)
         {
             short xPlayer = 0;
@@ -73,6 +99,22 @@ namespace Ultimate_tic_tac_toe
             return 'N';
         }
 
+
+        /// <summary>
+        ///     
+        ///     Determines if a win is in the left diagonal
+        /// 
+        /// </summary>
+        /// <param name="board">
+        /// 
+        ///     board to be evaluated
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     X, O or N, for X win, O win, or No winner
+        /// 
+        /// </returns>
         private char CheckLeftDiaganolWin(char[,] board)
         {
             short xPlayer = 0;
@@ -95,6 +137,27 @@ namespace Ultimate_tic_tac_toe
             return 'N';
         }
 
+
+        /// <summary>
+        ///     
+        ///     Checks for a win recursively in every row
+        /// 
+        /// </summary>
+        /// <param name="board">
+        /// 
+        ///     board to be evaluated
+        /// 
+        /// </param>
+        /// <param name="row">
+        /// 
+        ///     row in the board to be incremented, for recursive calls
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     X, O or N, for X win, O win, or No winner
+        /// 
+        /// </returns>
         private char CheckRowWin(char[,] board, short row)
         {
             short xPlayer = 0;
@@ -118,6 +181,27 @@ namespace Ultimate_tic_tac_toe
                 return 'N';
         }
 
+
+        /// <summary>
+        ///     
+        ///     Checks for a win recursively in every column
+        /// 
+        /// </summary>
+        /// <param name="board">
+        /// 
+        ///     board to be evaluated
+        /// 
+        /// </param>
+        /// <param name="col">
+        /// 
+        ///     column in the board to be incremented, for recursive calls
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     X, O or N, for X win, O win, or No winner
+        /// 
+        /// </returns>
         private char CheckColWin(char[,] board, short col)
         {
             short xPlayer = 0;
@@ -141,6 +225,23 @@ namespace Ultimate_tic_tac_toe
                 return 'N';
         }
 
+
+        /// <summary>
+        ///     
+        ///     Checks for a tie in the given board
+        /// 
+        /// </summary>
+        /// <param name="board">
+        /// 
+        ///     Board to be evaluated
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     Tuple containing boolean for if the game is tied or not, and N or T for 
+        ///     No win or Tie.
+        /// 
+        /// </returns>
         private Tuple<bool, char> CheckTie(char[,] board)
         {
             // If a mini game is still in progress then return false, 'N'
@@ -153,10 +254,22 @@ namespace Ultimate_tic_tac_toe
         }
 
         /// <summary>
-        /// Returns true/false if game is won and a char for who won
+        /// 
+        ///     Returns true/false if game is won and a char for who won, O or X.
+        ///     Otherwise, checks for a tie.
+        /// 
         /// </summary>
-        /// <param name="board"></param>
-        /// <returns></returns>
+        /// <param name="board">
+        /// 
+        ///     Board to be evaluated
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     Tuple containing boolean for if the game is tied or not, and X or O for 
+        ///     X win or O win.
+        /// 
+        /// </returns>
         public Tuple<bool, char> BoardComplete(char[,] board)
         {
             List<char> results = new List<char>();
@@ -175,6 +288,35 @@ namespace Ultimate_tic_tac_toe
 
         }
 
+
+        /// <summary>
+        /// 
+        ///  Returns all open moves for a given move.
+        /// 
+        /// </summary>
+        /// <param name="board">
+        /// 
+        ///     Given board to evaluate
+        /// 
+        /// </param>
+        /// <param name="boardNum">
+        /// 
+        ///     0 | 1 | 2
+        ///   --------------
+        ///     3 | 4 | 5
+        ///   --------------
+        ///     6 | 7 | 8
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     List of all open moves contained in the given board.
+        ///     
+        ///     short1: Row of move
+        ///     short2: Column of move
+        ///     short3: Board number of move (see chart above)
+        /// 
+        /// </returns>
         public List<Tuple<short, short, short>> GetOpenMoves(char[,] board, short boardNum)
         {
             List<Tuple<short, short, short>> moves = new List<Tuple<short, short, short>>();
@@ -189,10 +331,35 @@ namespace Ultimate_tic_tac_toe
         }
 
         /// <summary>
-        /// Returns the x,y coordinate of a board
+        /// 
+        ///     Returns (Row, Col) that equals the 0-8 boardNum move.
+        ///     
+        /// 
+        ///     00 | 01 | 02
+        ///   --------------
+        ///     10 | 11 | 12
+        ///   --------------
+        ///     20 | 21 | 22
+        /// 
+        ///     ==>
+        /// 
+        ///     0 | 1 | 2
+        ///   --------------
+        ///     3 | 4 | 5
+        ///   --------------
+        ///     6 | 7 | 8
+        /// 
         /// </summary>
-        /// <param name="boardNum">Board number (0-8)</param>
-        /// <returns></returns>
+        /// <param name="boardNum">
+        /// 
+        ///     Board number (0-8)
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     (Row, Col) representing boardNum
+        /// 
+        /// </returns>
         public Tuple<short, short> BoardCoord(short boardNum)
         {
             switch (boardNum)
@@ -209,6 +376,42 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
+
+        /// <summary>
+        /// 
+        ///     Returns board number that equals the (row, col) move.
+        /// 
+        ///     00 | 01 | 02
+        ///   --------------
+        ///     10 | 11 | 12   (Mini-game)
+        ///   --------------
+        ///     20 | 21 | 22
+        /// 
+        ///     ==>
+        /// 
+        ///     0 | 1 | 2
+        ///   --------------  (Overall game)
+        ///     3 | 4 | 5
+        ///   --------------
+        ///     6 | 7 | 8
+        ///     
+        /// 
+        /// </summary>
+        /// <param name="row">
+        /// 
+        ///     0, 1, or 2
+        ///     
+        ///     Row from 3x3 board
+        /// 
+        /// </param>
+        /// <param name="col">
+        /// 
+        ///     0, 1, or 2
+        ///     
+        ///     Column from 3x3 board
+        /// 
+        /// </param>
+        /// <returns></returns>
         public short MainBoardCoord(short row, short col)
         {
             if (row == 0 && col == 0)

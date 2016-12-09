@@ -9,39 +9,88 @@ namespace Ultimate_tic_tac_toe
 {
     class AlphaBeta
     {
+        // Game Board
         private Board BoardState;
+
+        // MaxPlayer
         private bool MaxPlayer = true;
+
+        // From initial call
         private short MaxTreeDepth;
+
+        // List containing children of root
         private List<Node> RootChildren;
+
+        // Root node from Game.cs
         private Node root;
 
+
+        /// <summary>
+        /// 
+        ///     Default contructor
+        ///     
+        /// </summary>
         public AlphaBeta()
         {
             BoardState = new Board();
         }
 
+        /// <summary>
+        /// 
+        ///     Public method for initiating the AI making a move.
+        ///     
+        /// </summary>
+        /// <param name="n">
+        /// 
+        ///     The move the X player (Min, Human) made, packaged up in a Node instance.    
+        /// 
+        /// </param>
+        /// <param name="depth">
+        /// 
+        ///     The depth the AI should search in the game tree.
+        /// 
+        /// </param>
+        /// <param name="player">
+        /// 
+        ///     The current player's turn, false for Min, true for Max.
+        ///     X and O respectively.
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     Returns the AI's chosen move, packaged up as a Node instance.
+        /// 
+        /// </returns>
         public Node MakeAIMove(Node n, short depth, bool player)
         {
             root = new Node(MakeMove(player, new Tuple<short, short, short>(n.Row, n.Col, n.BoardNumberPlayedOn)));
-
-
             MaxTreeDepth = depth;
             RootChildren = new List<Node>();
-
             short result = AB(root, short.MinValue, short.MaxValue, player);
-
-
 
             Node selectedNode = new Node(BestMove());
 
-
-            Debug.WriteLine("AI Move: " + selectedNode.BoardNumberPlayedOn + " " + selectedNode.Row + " " + selectedNode.Col);
+            // For debugging purposes only
+            //Debug.WriteLine("AI Move: " + selectedNode.BoardNumberPlayedOn + " " + selectedNode.Row + " " + selectedNode.Col);
 
             Node v = new Node(MakeMove(selectedNode.Player, new Tuple<short, short, short>(selectedNode.Row, selectedNode.Col, selectedNode.BoardNumberPlayedOn)));
 
             return v;
         }
 
+
+        /// <summary>
+        /// 
+        ///     Secondary evaluation function. Exists to keep the AI from making some game losing errors,
+        ///     because the heuristic function is simplistic and doesn't account for many special cases.
+        ///     If none of the special cases exist, the child with the highest heuristic score is chosen.
+        /// 
+        /// </summary>
+        /// <returns>
+        /// 
+        ///     The best next move to choose based on all of children of the root, packaged up as a Node instance.
+        /// 
+        /// </returns>
         private Node BestMove()
         {
             short max = short.MinValue;
@@ -81,12 +130,29 @@ namespace Ultimate_tic_tac_toe
         }
 
         /// <summary>
-        ///     This function makes one valid move.
+        ///     This function applies one move to the game board, AlphaBeta.BoardState
         /// </summary>
-        /// <param name="player"></param>
-        /// <param name="boardNum"></param>
+        /// <param name="player">
+        /// 
+        ///     Max or Min player, X or O respectively
+        /// 
+        /// </param>
+        /// <param name="boardNum">
+        /// 
+        ///     The number of the mini game to play on:
+        ///     
+        ///     0 | 1 | 2
+        ///   --------------
+        ///     3 | 4 | 5
+        ///   --------------
+        ///     6 | 7 | 8
+        ///     
+        /// 
+        /// </param>
         /// <returns>
+        /// 
         ///     Returns a new node for the tree.
+        ///     
         /// </returns>
         private Node MakeMove(bool player, Tuple<short, short, short> move)
         {
@@ -121,6 +187,24 @@ namespace Ultimate_tic_tac_toe
             return node;
         }
 
+
+
+        /// <summary>
+        ///     
+        ///     Determines whether the node passed in is the root.
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="n">
+        /// 
+        ///     Node to be evaluated.
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     true if parameter was the root, false otherwise.
+        /// 
+        /// </returns>
         private bool IsRoot(Node n)
         {
             bool result = false;
@@ -136,6 +220,17 @@ namespace Ultimate_tic_tac_toe
             return result;
         }
 
+
+        /// <summary>
+        /// 
+        ///     This function undoes a specific move made to AlphaBeta.BoardState
+        /// 
+        /// </summary>
+        /// <param name="n">
+        /// 
+        ///     Move to be undone packaged up as a Node instance.
+        /// 
+        /// </param>
         private void UndoMove(Node n)
         {
             if (!IsRoot(n))
@@ -147,6 +242,22 @@ namespace Ultimate_tic_tac_toe
             }
         }
 
+
+        /// <summary>
+        ///     
+        ///     This function determines whether the given node is a leaf node.
+        /// 
+        /// </summary>
+        /// <param name="node">
+        /// 
+        ///     The node being evaluated.
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     True or false, if a node is a leaf or not.
+        /// 
+        /// </returns>
         private bool IsTerminal(bool Player, Node node)
         {
             if (BoardState.BoardComplete(BoardState.Main).Item1)
@@ -157,11 +268,27 @@ namespace Ultimate_tic_tac_toe
 
 
         /// <summary>
-        ///     Lowest level evaluation, assign value to one sequence of 3 spaces
+        /// 
+        ///     Lowest level evaluation, assign value to one sequence of 3 spaces on a single board.
+        ///     
         /// </summary>
-        /// <param name="player"></param>
-        /// <param name="line"></param>
-        /// <returns></returns>
+        /// <param name="player">
+        /// 
+        ///     Max or Min player, true or false respectively
+        /// 
+        /// </param>
+        /// <param name="line">
+        /// 
+        ///     Line of 3 chars representing one line on one board.
+        ///     
+        ///     Either row, column, or diagonal.
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     Heuristic value of that single line evaluated, based on the rules.
+        /// 
+        /// </returns>
         private short EvaluateLine(bool player, char[] line)
         {
             short result = 0;
@@ -191,16 +318,39 @@ namespace Ultimate_tic_tac_toe
 
 
         /// <summary>
-        ///     This is the low level static evaluation function
+        /// 
+        ///     This is the mid-level static evaluation function. Evaluates a single
+        ///     3x3 char array at a time, which represents a single mini-game or
+        ///     overall game.
+        ///     
         /// </summary>
-        /// <param name="board"></param>
-        /// <param name="player"></param>
-        /// <param name="isMain"></param>
-        /// <returns></returns>
+        /// <param name="board">
+        /// 
+        ///     The 3x3 char array that represents one mini board or the main board.
+        /// 
+        /// </param>
+        /// <param name="player">
+        /// 
+        ///     Max or Min player, true or false respectively
+        /// 
+        /// </param>
+        /// <param name="multiplier">
+        /// 
+        ///     Multiplier for the heuristic. Values are either 1 or 10,
+        ///     for if the board being evaluated is a mini-game or the overall game,
+        ///     respectively. Thus, when evaluated a board state, the status of the overall
+        ///     game will be weighted higher.
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     Heuristic value of given 3x3 mini-game, based on the multiplier and the 
+        ///     values received from the low level evaluation for each line of chars in the 3x3
+        /// 
+        /// </returns>
         private short EvaluateBoard(char[,] board, bool player, short multiplier)
         {
             short result = 0;
-            // Evaluating Main board
 
             Tuple<bool, char> res = BoardState.BoardComplete(board);
             // If the game is complete
@@ -237,11 +387,29 @@ namespace Ultimate_tic_tac_toe
 
 
         /// <summary>
-        ///     This is the high level static evaluation function.
+        ///     This is the high level static evaluation function. This function
+        ///     loops through all mini-games and passes each one to the mid-level
+        ///     evaluation function, adding up their individual heuristic scores.
+        ///     
         /// </summary>
-        /// <param name="player"></param>
-        /// <param name="node"></param>
-        /// <returns></returns>
+        /// <param name="player">
+        /// 
+        ///     Max or Min player, true or false respectively.
+        /// 
+        /// </param>
+        /// <param name="node">
+        /// 
+        ///     The current move that was just made, packaged up as a Node
+        ///     instance. Used for checking special case of the game being won
+        ///     or lost, or if the move sent the opponent to a completed board
+        ///     without winning their own board.
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     True heuristic value of the given board state. (AlphaBeta.BoardState)
+        /// 
+        /// </returns>
         private short Evaluate(bool player, Node current)
         {
             if (player == MaxPlayer)
@@ -281,7 +449,6 @@ namespace Ultimate_tic_tac_toe
                 }
             }
 
-
             short result = 0;
 
             for (short index = 0; index < 10; index++)
@@ -301,6 +468,28 @@ namespace Ultimate_tic_tac_toe
             return result;
         }
 
+
+        /// <summary>
+        ///     
+        ///     This function returns all of the children (valid moves) of a given tree node.
+        ///     It populates all properties on each node.
+        /// 
+        /// </summary>
+        /// <param name="player">
+        /// 
+        ///     Max or Min player, true of false respectively
+        /// 
+        /// </param>
+        /// <param name="node">
+        /// 
+        ///     Node in the game tree from which to generate valid children
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        ///     List<Node> containing all valid child nodes of the given node
+        /// 
+        /// </returns>
         private List<Node> Children(bool player, Node node)
         {
             List<Node> children = new List<Node>();
@@ -312,7 +501,7 @@ namespace Ultimate_tic_tac_toe
 
             moveList = BoardState.GetOpenMoves(board, node.BoardNumberToPlayOn);
 
-            // Board complete
+            // Board complete, gather all valid nodes from every open board
             if (BoardState.BoardComplete(board).Item1)
             {
                 List<Tuple<short, short, short>> allMoves = new List<Tuple<short, short, short>>();
@@ -353,28 +542,27 @@ namespace Ultimate_tic_tac_toe
 
         /// <summary>
         /// 
-        /// This function 
-        /// 
+        ///     This function contains the Alpha Beta pruning algorithm.
         /// 
         /// </summary>
         /// <param name="node">
         /// 
-        ///     The current node being evaluated.
+        ///     The current node being evaluated. Begins with root.
         ///     
         /// </param>
         /// <param name="alpha">
         /// 
-        ///     Current value of alpha
+        ///     Current value of alpha, begins with short.Min
         ///     
         /// </param>
         /// <param name="beta">
         /// 
-        ///     Current value of beta
+        ///     Current value of beta, begins with short.Max
         ///     
         /// </param>
         /// <param name="player">
         /// 
-        /// Current player, Max or Min
+        /// Current player, Max or Min, true or false respectively
         /// 
         /// </param>
         /// <returns></returns>

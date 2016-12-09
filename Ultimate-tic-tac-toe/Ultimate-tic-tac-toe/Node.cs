@@ -36,6 +36,13 @@ namespace Ultimate_tic_tac_toe
             this.Depth = 0;
         }
 
+
+        /// <summary>
+        ///     
+        ///     Copy contructor for the Node class
+        /// 
+        /// </summary>
+        /// <param name="n"></param>
         public Node(Node n)
         {
             this.Row = n.Row;
@@ -48,6 +55,28 @@ namespace Ultimate_tic_tac_toe
             this.Value = n.Value;
         }
 
+
+        /// <summary>
+        ///     
+        ///     Utility contructor
+        /// 
+        /// </summary>
+        /// <param name="depth">
+        /// 
+        ///     Depth of the node
+        /// 
+        /// </param>
+        /// <param name="BNTPO">
+        /// 
+        ///     Board number to play on
+        /// 
+        /// </param>
+        /// <param name="player">
+        /// 
+        /// 
+        ///     Max or Min player, true or false
+        /// 
+        /// </param>
         public Node(short depth, short BNTPO, bool player)
         {
             this.Depth = depth;
@@ -56,6 +85,32 @@ namespace Ultimate_tic_tac_toe
             this.MainChanged = false;
         }
 
+
+        /// <summary>
+        /// 
+        ///     Utility contructor
+        /// 
+        /// </summary>
+        /// <param name="BNPO">
+        /// 
+        ///     Board Number Played On
+        /// 
+        /// </param>
+        /// <param name="BNTPO">
+        /// 
+        ///     Board number to play on
+        /// 
+        /// </param>
+        /// <param name="row">
+        /// 
+        ///     3x3 Row number
+        /// 
+        /// </param>
+        /// <param name="col">
+        /// 
+        ///     3x3 Column number
+        /// 
+        /// </param>
         public Node(short BNPO, short BNTPO, short row, short col)
         {
             this.BoardNumberPlayedOn = BNPO;
